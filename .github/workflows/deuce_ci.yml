@@ -1,5 +1,9 @@
 name: Deuce CI
 
+concurrency:
+  group: deuce-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 # Compiles ONLY the Deuce_v1_1 env on GitHub's runners (which have the ESP32 toolchain),
 # so every push is verified to build before anything is flashed. Based on Bruce's own
 # manual_build_sel_env.yml recipe.
@@ -65,6 +69,14 @@ jobs:
         run: |
           set -o pipefail
           platformio run -e "$SELECTED_ENV" 2>&1 | tee build.log
+
+      - name: Report flash/RAM usage (always)
+        if: always()
+        run: |
+          # PlatformIO prints "RAM:   [..] N% (used X from Y)" and same for Flash.
+          # Surface them as notices so the app-partition / RAM headroom is visible
+          # from the run's annotations after every build.
+          grep -E "^(RAM|Flash):" build.log 2>/dev/null | while IFS= read -r l; do echo "::notice::$l"; done || true
 
       - name: Show build tail (always)
         if: always()
