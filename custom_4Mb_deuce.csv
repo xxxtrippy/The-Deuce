@@ -1,0 +1,12 @@
+# THE DEUCE v1.1 partition table (4MB flash) -- bigger LittleFS for theme/icons/fonts.
+# Sized to the REAL firmware (3,598,336 bytes). factory = 0x380000 (3,670,016 B, ~70KB
+# headroom); spiffs/LittleFS = 0x70000 (458,752 B = 448KB), up from the stock 192KB.
+#
+# RULE: factory Size (0x380000 = 3,670,016) must stay >= the firmware's "Flash: used"
+# bytes. If a future build grows past that, the app won't boot -- bump factory up and
+# shrink spiffs by the same amount (both 0x10000-aligned; all must sum to 0x400000).
+#
+# Name,   Type, SubType, Offset,   Size,     Flags
+nvs,      data, nvs,     0x9000,   0x6000,
+factory,  app,  factory, 0x10000,  0x380000,
+spiffs,   data, spiffs,  0x390000, 0x70000,

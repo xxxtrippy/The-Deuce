@@ -1,0 +1,108 @@
+#include "core/powerSave.h"
+#include "core/utils.h"
+#include <interface.h>
+#include <LittleFS.h>
+
+// ============================================================================
+//  THE DEUCE — touch via TFT_eSPI (XPT2046 on the display SPI bus, CS=TOUCH_CS).
+//  Replaces the CYD28_TouchR fixed-scaling driver (which read as a permanent
+//  off-screen press on this panel) with TFT_eSPI's calibrated touch.
+//  Calibration is stored in /calData on LittleFS. First-time calibration only
+//  runs when booted on BATTERY power, so it never fires during a USB flash/reset;
+//  once saved it loads on every boot and works on any power source.
+// ============================================================================
+
+/***************************************************************************************
+** Function name: _setup_gpio()
+***************************************************************************************/
+void _setup_gpio() {
+    bruceConfig.colorInverted = 0;
+    pinMode(TFT_BL, OUTPUT);
+    // NOTE: rotation is NOT forced here, so the Orientation menu setting persists.
+}
+
+/***************************************************************************************
+** Function name: _post_setup_gpio()
+***************************************************************************************/
+void _post_setup_gpio() {
+    pinMode(TOUCH_CS, OUTPUT);
+    digitalWrite(TOUCH_CS, HIGH);
+
+    uint16_t calData[5];
+
+    // 1) Load existing calibration if present -> touch works on any power source.
+    File caldata = LittleFS.open("/calData", "r");
+    if (caldata) {
+        bool ok = true;
+        for (int i = 0; i < 5; i++) {
+            String line = caldata.readStringUntil('\n');
+            if (line.length() == 0) { ok = false; break; }
+            calData[i] = (uint16_t)line.toInt();
+        }
+        caldata.close();
+        if (ok) {
+            tft.setTouch(calData);
+            Serial.println("Touch: loaded /calData");
+            return;
+        }
+    }
+
+    // 2) No valid calibration yet. Only calibrate when on BATTERY (skip on USB),
+    //    so the post-flash USB boot never blocks on the corner-tap routine.
+    //    GPIO39 reads ~0 on USB-only (pack off) and ~1.6-2.1V on battery.
+    uint32_t mv = analogReadMilliVolts(39);
+    if (mv > 1000) {
+        tft.setRotation(bruceConfigPins.rotation);
+        tft.fillScreen(TFT_BLACK);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.setCursor(10, 10);
+        tft.println("Touch each corner");
+        tft.calibrateTouch(calData, TFT_WHITE, TFT_BLACK, 15);
+        File w = LittleFS.open("/calData", "w");
+        if (w) {
+            w.printf(
+                "%d\n%d\n%d\n%d\n%d\n", calData[0], calData[1], calData[2], calData[3], calData[4]
+            );
+            w.close();
+        }
+        tft.setTouch(calData);
+        Serial.println("Touch: calibrated on battery, saved /calData");
+    } else {
+        Serial.println("Touch: USB power, no calData -> calibration deferred to first battery boot");
+    }
+}
+
+/*********************************************************************
+** Function: setBrightness
+**********************************************************************/
+void _setBrightness(uint8_t brightval) {
+    if (brightval > 5) digitalWrite(TFT_BL, HIGH);
+    else digitalWrite(TFT_BL, LOW);
+}
+
+/*********************************************************************
+** Function: InputHandler  (TFT_eSPI getTouch -> already rotation-mapped)
+**********************************************************************/
+void InputHandler(void) {
+    static unsigned long tm = millis();
+    if (millis() - tm > 200 || LongPress) {
+        uint16_t x = 0, y = 0;
+        if (tft.getTouch(&x, &y)) {
+            tm = millis();
+            if (!wakeUpScreen()) AnyKeyPress = true;
+            else return;
+            touchPoint.x = (int)x;
+            touchPoint.y = (int)y;
+            touchPoint.pressed = true;
+            touchHeatMap(touchPoint);
+        } else {
+            touchPoint.pressed = false;
+        }
+    }
+}
+
+/*********************************************************************
+** Function: powerOff / checkReboot
+**********************************************************************/
+void powerOff() {}
+void checkReboot() {}
