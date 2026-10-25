@@ -1,16 +1,14 @@
 // THE DEUCE v1.1 -- text-only Claude chat over the Anthropic Messages API.
 //
-// Flow: WiFi -> HTTPS POST https://api.anthropic.com/v1/messages -> JSON reply text.
-// Multi-turn: the last few turns are kept in RAM and resent each call so follow-ups
-// have context. Strictly text; no images are ever sent or requested.
+// Deliberately STATELESS: one question in, one answer out. No conversation history is
+// kept, so every request is tiny -- which keeps RAM minimal and the TLS connection
+// reliable on the no-PSRAM WROOM (long histories were exhausting the heap). Each "Chat"
+// is a fresh single turn.
 //
-// Storage (LittleFS, separate from bruce.conf so no long rebuild and so the WebUI can
-// write the key independently):
+// Storage (LittleFS, separate from bruce.conf):
 //   /deuce_claude.key  -> the sk-ant-... API key, one line
 //   /deuce_claude.cfg  -> line 1 = model id, line 2 = max_tokens
-//
-// The key can be set on-device (on-screen keyboard) OR from the WebUI at
-// http://deuce.local/claude  (see the /claude route in webInterface.cpp).
+// The key can be set on-screen (Settings) or from the WebUI at  http://<device-ip>/claude
 
 #include "claude_chat.h"
 
@@ -28,18 +26,11 @@
 #include <vector>
 
 // ---------------------------------------------------------------------------
-// state
-struct ClaudeMsg {
-    bool user;    // true = user turn, false = assistant turn
-    String text;
-};
-static std::vector<ClaudeMsg> g_hist;                  // conversation (trimmed)
-static String g_model = "claude-haiku-5-5";            // default; change in Settings
-static int g_maxTokens = 512;                          // keep modest for RAM + screen
-static String g_apiKey = "";                           // loaded from /deuce_claude.key
+// settings (persisted)
+static String g_model = "claude-haiku-5-5"; // default; change in Settings
+static int g_maxTokens = 512;               // reply length cap (64..4096)
+static String g_apiKey = "";                // loaded from /deuce_claude.key
 static bool g_cfgLoaded = false;
-
-static const size_t HISTORY_MAX = 8; // last N turns resent for context (RAM bound)
 
 // ---------------------------------------------------------------------------
 // persistence
@@ -85,70 +76,60 @@ static void claudeSaveKey() {
 }
 
 // ---------------------------------------------------------------------------
-// helpers
 static bool claudeWifi() {
     if (WiFi.status() == WL_CONNECTED) return true;
     return wifiConnectMenu(); // Bruce's connect UI; returns true once associated
 }
 
-// Keep history bounded and valid: at most HISTORY_MAX turns, and it must start with a
-// user turn (the API requires the first message to be from the user).
-static void claudeTrim() {
-    while (g_hist.size() > HISTORY_MAX) g_hist.erase(g_hist.begin());
-    while (!g_hist.empty() && !g_hist.front().user) g_hist.erase(g_hist.begin());
-}
-
-// POST the conversation (with the new user message appended) and return the reply text,
-// or a human-readable error string. On any failure the just-added user turn is rolled
-// back so history never ends on a dangling user message.
+// Send ONE user message, return the reply text (or a human-readable error). Stateless:
+// no history, so the request is always small.
 static String claudeSend(const String &userMsg) {
-    g_hist.push_back({true, userMsg});
-    claudeTrim();
-
     String body;
     {
         JsonDocument doc;
         doc["model"] = g_model;
         doc["max_tokens"] = g_maxTokens;
         JsonArray arr = doc["messages"].to<JsonArray>();
-        for (auto &m : g_hist) {
-            JsonObject o = arr.add<JsonObject>();
-            o["role"] = m.user ? "user" : "assistant";
-            o["content"] = m.text;
-        }
+        JsonObject o = arr.add<JsonObject>();
+        o["role"] = "user";
+        o["content"] = userMsg;
         serializeJson(doc, body);
     }
 
-    WiFiClientSecure client;
-    client.setInsecure(); // same as Bruce's other HTTPS features (no cert pinning)
-    HTTPClient https;
-    https.setConnectTimeout(15000);
-    https.setTimeout(30000);
-    if (!https.begin(client, "https://api.anthropic.com/v1/messages")) {
-        g_hist.pop_back();
-        return "Could not start HTTPS connection.";
+    // The ESP32 TLS+HTTP stack intermittently returns an empty body on an HTTP 200, so we
+    // (a) force HTTP/1.0 for a plain Content-Length body getString() reads reliably, and
+    // (b) retry once if the body still comes back empty.
+    int code = 0;
+    String resp;
+    for (int attempt = 1; attempt <= 2; attempt++) {
+        WiFiClientSecure client;
+        client.setInsecure(); // same as Bruce's other HTTPS features (no cert pinning)
+        HTTPClient https;
+        https.setConnectTimeout(15000);
+        https.setTimeout(30000);
+        if (!https.begin(client, "https://api.anthropic.com/v1/messages")) {
+            delay(400);
+            continue;
+        }
+        https.useHTTP10(true);
+        https.addHeader("content-type", "application/json");
+        https.addHeader("x-api-key", g_apiKey);
+        https.addHeader("anthropic-version", "2023-06-01");
+        code = https.POST(body);
+        resp = https.getString();
+        https.end();
+        if (code > 0 && resp.length() > 0) break; // got a body -> stop retrying
+        delay(400);                               // transient empty -> pause, try once more
     }
-    https.addHeader("content-type", "application/json");
-    https.addHeader("x-api-key", g_apiKey);
-    https.addHeader("anthropic-version", "2023-06-01");
 
-    int code = https.POST(body);
-    String resp = https.getString();
-    https.end();
-
-    if (code <= 0) {
-        g_hist.pop_back();
-        return String("Network error: ") + HTTPClient::errorToString(code);
-    }
+    if (code <= 0)
+        return String("Network error ") + code + " (" + HTTPClient::errorToString(code) +
+               "), free heap " + (unsigned)ESP.getFreeHeap();
 
     JsonDocument rdoc;
     DeserializationError err = deserializeJson(rdoc, resp);
-    if (err) {
-        g_hist.pop_back();
-        return String("Bad response (HTTP ") + code + "): " + err.c_str();
-    }
+    if (err) return String("Bad response (HTTP ") + code + "): " + err.c_str();
     if (!rdoc["error"].isNull()) {
-        g_hist.pop_back();
         const char *em = rdoc["error"]["message"] | "unknown error";
         return String("API error (HTTP ") + code + "): " + em;
     }
@@ -159,13 +140,7 @@ static String claudeSend(const String &userMsg) {
         const char *t = blk["type"] | "";
         if (strcmp(t, "text") == 0) text += (const char *)(blk["text"] | "");
     }
-    if (text.length() == 0) {
-        g_hist.pop_back();
-        return String("Empty reply (HTTP ") + code + ").";
-    }
-
-    g_hist.push_back({false, text});
-    claudeTrim();
+    if (text.length() == 0) return String("Empty reply (HTTP ") + code + ").";
     return text;
 }
 
@@ -175,14 +150,14 @@ static void claudeShowText(const String &title, const String &text) {
     area.show(); // blocks with scroll until the user backs out
 }
 
-// Compose a message, send it, show the reply. History is preserved across calls.
-static void claudeCompose() {
+// One question, one answer. Returns to the menu afterward (fresh each time).
+static void claudeChat() {
     claudeLoadKey(); // refresh in case the key was just set via the WebUI
     if (g_apiKey.length() == 0) {
         displayError("Set your API key first (Settings).", true);
         return;
     }
-    String msg = keyboard("", 240, "Message to Claude:");
+    String msg = keyboard("", 240, "Ask Claude:");
     msg.trim();
     if (msg.length() == 0) return;
 
@@ -196,16 +171,6 @@ static void claudeCompose() {
     padprintln("  Thinking...");
     String reply = claudeSend(msg);
     claudeShowText("Claude", reply);
-}
-
-static void claudeReadLast() {
-    for (int i = (int)g_hist.size() - 1; i >= 0; i--) {
-        if (!g_hist[i].user) {
-            claudeShowText("Claude", g_hist[i].text);
-            return;
-        }
-    }
-    displayInfo("No replies yet.", true);
 }
 
 static void claudePickModel() {
@@ -255,10 +220,6 @@ void deuceClaudeSettings() {
                              claudeSaveCfg();
                          }
                      }});
-        o.push_back({"Clear Chat", []() {
-                         g_hist.clear();
-                         displayInfo("Chat cleared.", true);
-                     }});
         o.push_back({"Back", []() {}});
         int sel = loopOptions(o, MENU_TYPE_SUBMENU, "Claude Setup");
         if (sel == -1 || sel == (int)o.size() - 1) return; // Esc or Back
@@ -269,15 +230,9 @@ void deuceClaudeLaunch() {
     claudeLoad();
     while (true) {
         std::vector<Option> o;
-        o.push_back({"Send Message", []() { claudeCompose(); }});
-        o.push_back({"New Chat", []() {
-                         g_hist.clear();
-                         claudeCompose();
-                     }});
-        if (!g_hist.empty()) o.push_back({"Read Last Reply", []() { claudeReadLast(); }});
+        o.push_back({"Chat", []() { claudeChat(); }});
         o.push_back({"Settings", []() { deuceClaudeSettings(); }});
-        o.push_back({"Back", []() {}});
         int sel = loopOptions(o, MENU_TYPE_SUBMENU, "Claude");
-        if (sel == -1 || sel == (int)o.size() - 1) return; // Esc or Back
+        if (sel == -1) return; // Esc / Back button -> back to the grid
     }
 }

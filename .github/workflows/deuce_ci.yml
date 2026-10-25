@@ -1,0 +1,84 @@
+name: Deuce CI
+
+# Compiles ONLY the Deuce_v1_1 env on GitHub's runners (which have the ESP32 toolchain),
+# so every push is verified to build before anything is flashed. Based on Bruce's own
+# manual_build_sel_env.yml recipe.
+
+on:
+  push:
+    paths:
+      - "**.h"
+      - "**.cpp"
+      - "**.ino"
+      - "**.ini"
+      - "**.py"
+      - "**.csv"
+      - "**.json"
+      - "**.html"
+      - "**.css"
+      - "**.js"
+      - ".github/workflows/deuce_ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build-deuce:
+    name: Build Deuce_v1_1
+    runs-on: ubuntu-latest
+    env:
+      SELECTED_ENV: Deuce_v1_1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Cache PlatformIO core + toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      - name: Cache library deps
+        uses: actions/cache@v4
+        with:
+          path: .pio/libdeps
+          key: ${{ runner.os }}-libdeps-${{ env.SELECTED_ENV }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-libdeps-${{ env.SELECTED_ENV }}-
+
+      - name: Install dependencies
+        run: |
+          pip install requests esptool intelhex
+          pip install -U platformio
+
+      - name: Inject BRUCE_VERSION (same as Bruce CI)
+        run: |
+          version="${GITHUB_SHA::7}"
+          sed -i "s/-DBRUCE_VERSION=/-DBRUCE_VERSION='\"$version\"' ; /g" ./platformio.ini || true
+
+      - name: Compile Deuce_v1_1
+        run: |
+          set -o pipefail
+          platformio run -e "$SELECTED_ENV" 2>&1 | tee build.log
+
+      - name: Show build tail (always)
+        if: always()
+        run: |
+          echo "----- last 150 lines -----"
+          tail -n 150 build.log 2>/dev/null || echo "no build.log"
+
+      - name: Upload firmware artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Deuce_v1_1-firmware
+          path: |
+            .pio/build/Deuce_v1_1/firmware.bin
+            .pio/build/Deuce_v1_1/firmware.elf
+          if-no-files-found: warn
+          retention-days: 3
