@@ -21,7 +21,7 @@ Fabricated around the ESP32-WROOM-32U and a 2.4-inch touchscreen, it integrates 
 
 No bullshit. No unnecessary overhead. Just a custom environment, made for direct access to the tools that matter most.
 
-**Core capabilities**
+### Core capabilities
 
 - Wireless network reconnaissance and diagnostics
 - SubGHz RF and 2.4 GHz radio experimentation
@@ -236,7 +236,7 @@ The Deuce is a personal hardware and firmware project.
 - Network testing is intended for authorized systems and environments.
 - API credentials are configured on-device, and must never be committed to source control.
 
-Use the device responsibly, and only against systems you *own* or have explicit permission to test.
+Use the device responsibly, and only against systems you **own** or have explicit permission to test.
 
 ---
 
