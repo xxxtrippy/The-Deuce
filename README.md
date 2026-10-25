@@ -38,9 +38,9 @@ No bullshit. No unnecessary overhead. Just a custom environment, made for direct
 
 ## `// OPERAT0R INT3RFACE`
 
-### Custom segmented-LCD UI
+### Custom segmented LCD UI
 
-The interface is built from the ground up around a Matrix/hacker style, segmented LCD aesthetic.
+The interface is built from the ground up, around a segmented LCD "Matrix" aesthetic.
 
 - **Three-page touch interface** — a 2×2 swipe based menu grid, with direct tile access and no navigation bars.
 - **14-segment starburst typography** — custom rendered glyphs with deliberate segment breaks, consistent character height, and precise spacing.
@@ -49,13 +49,13 @@ The interface is built from the ground up around a Matrix/hacker style, segmente
 - **Hardware flash indicator** — lightning bolt status indicator triggered by the GPIO2 flash switch.
 - **Dedicated Back input** — GPIO36 hardware button with debounce handling. No getting stuck.
 
-The goal: a high-information interface that stays readable, responsive, and consistent across the device.
+The goal: a high information interface that stays readable, responsive, and consistent across the device.
 
 ---
 
 ## `// INT3LLIGENCE 5UBSYST3M`
 
-### Claude AI · On-device interface
+### Claude AI · Onboard interface
 
 A direct interface to Anthropic's Messages API, accessible from the handheld over WiFi.
 
@@ -102,8 +102,7 @@ The device hosts its own local web interface at:
 Features include:
 
 - Dedicated login
-- Matrix-green visual theme
-- Animated rain effect
+- Animated Matrix rain visuals
 - Theme colors synchronized with the device UI
 - Device branding and Claude AI configuration
 
@@ -182,14 +181,14 @@ Partition configuration: `custom_4Mb_deuce.csv`
 
 Current development targets:
 
-- [x] Stopwatch and countdown timer — `99:99:99`
-- [ ] Barcode generation — Code 128, UPC-A, EAN-13, Code 93, Code 39, Code 11
-- [ ] On-screen barcode output and PNG export to SD
+- [x] Stopwatch and countdown timer `99:99:99`
+- [ ] Barcode generation via Code 128, UPC-A, EAN-13, Code 93, Code 39, Code 11
+- [ ] Live barcode display & PNG export to SD
 - [ ] IR appliance library with SD-backed code database and browser
 - [x] Intervalometer
-- [x] VIN decoder — offline WMI lookup and online NHTSA lookup
+- [x] VIN decoder — offline WMI lookup & online NHTSA lookup
 - [ ] Lock combination calculator
-- [ ] Sentry-Safe I²C interface
+- [ ] Sentry Safe I²C interface
 - [x] QR Saved Codes tab
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
