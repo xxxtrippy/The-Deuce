@@ -1,12 +1,19 @@
-# THE DEUCE v1.1 partition table (4MB flash) -- bigger LittleFS for theme/icons/fonts.
-# Sized to the REAL firmware (3,598,336 bytes). factory = 0x380000 (3,670,016 B, ~70KB
-# headroom); spiffs/LittleFS = 0x70000 (458,752 B = 448KB), up from the stock 192KB.
+# THE DEUCE v1.1 partition table (4MB flash).
+# LittleFS shrunk 448KB -> 256KB to give the app partition room for the feature batch
+# (barcodes, IR library, VIN, timers, etc.). Heavy data (IR code DB, saved barcodes)
+# lives on the SD card, not here.
 #
-# RULE: factory Size (0x380000 = 3,670,016) must stay >= the firmware's "Flash: used"
-# bytes. If a future build grows past that, the app won't boot -- bump factory up and
-# shrink spiffs by the same amount (both 0x10000-aligned; all must sum to 0x400000).
+# factory (app) = 0x3B0000 = 3,866,624 B   spiffs/LittleFS = 0x40000 = 262,144 B (256KB)
+#
+# RULE: factory Size (3,866,624) must stay >= the firmware's "Flash: used" bytes (the CI
+# build prints that as a notice). As of this change: used ~3,648,147 -> ~213KB headroom.
+# If a build grows past factory, shrink spiffs more (0x10000-aligned; nvs+factory+spiffs
+# must sum to 0x400000 = 4MB).
+#
+# NOTE: changing this layout reformats LittleFS on next boot -> on-device saved data
+# (API key, rain settings, saved QRs) is wiped. Re-enter the API key after flashing.
 #
 # Name,   Type, SubType, Offset,   Size,     Flags
 nvs,      data, nvs,     0x9000,   0x6000,
-factory,  app,  factory, 0x10000,  0x380000,
-spiffs,   data, spiffs,  0x390000, 0x70000,
+factory,  app,  factory, 0x10000,  0x3B0000,
+spiffs,   data, spiffs,  0x3C0000, 0x40000,
