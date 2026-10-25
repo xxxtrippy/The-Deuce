@@ -3,11 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/the-deuce-title-lcd14-green.svg" alt="THE DEUCE" width="500">
-</p>
-
-<p align="center">
-  <em>One device. Multiple attack surfaces. Total situational awareness.</em>
+  <em>One rig. Two brains. Multiple attack surfaces. Total situational awareness.</em>
 </p>
 
 <p align="center">
@@ -19,20 +15,20 @@
 
 ## `// SYST3M OVERV1EW`
 
-The Deuce is a custom-built ESP32 handheld engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
+The Deuce is a custom built ESP32 handheld, engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
 
-Built around the ESP32-WROOM-32U and a 2.4-inch resistive touchscreen, it integrates a collection of radio interfaces, peripheral controllers, and purpose-built firmware into a compact field platform.
+Fabricated around the ESP32-WROOM-32U and a 2.4-inch touchscreen, it integrates a collection of radio interfaces, peripheral controllers, and purpose built firmware into a compact field platform.
 
-No stock interface. No unnecessary overhead. Just a custom environment built around direct access to the tools that matter.
+No bullshit. No unnecessary overhead. Just a custom environment, made for direct access to the tools that matter most.
 
 **Core capabilities**
 
 - Wireless network reconnaissance and diagnostics
-- Sub-GHz RF and 2.4 GHz radio experimentation
+- SubGHz RF and 2.4 GHz radio experimentation
 - Infrared transmission and reception
 - NFC / RFID interaction
-- GPS positioning and real-time clock integration
-- SD-based storage and utilities
+- GPS positioning and RTC integration
+- SD based storage and utilities
 - Local device WebUI
 - On-device interface for Anthropic's Claude AI
 
@@ -44,14 +40,14 @@ No stock interface. No unnecessary overhead. Just a custom environment built aro
 
 ### Custom segmented-LCD UI
 
-The interface is built from the ground up around a matrix-green, segmented-display aesthetic.
+The interface is built from the ground up around a Matrix/hacker style, segmented LCD aesthetic.
 
-- **Three-page touch interface** — a 2×2 swipe-based menu grid, with direct tile access and no stock-style navigation bars.
-- **14-segment starburst typography** — custom-rendered glyphs with deliberate segment breaks, consistent character height, and precise spacing.
+- **Three-page touch interface** — a 2×2 swipe based menu grid, with direct tile access and no navigation bars.
+- **14-segment starburst typography** — custom rendered glyphs with deliberate segment breaks, consistent character height, and precise spacing.
 - **Matrix rain engine** — animated background rendered behind the interface, with reserved label regions to prevent visual interference.
-- **Live system header** — clock, battery percentage, and WiFi, SD, BLE, GPS, and WebUI status indicators.
-- **Hardware flash indicator** — lightning-bolt status indicator triggered by the GPIO2 flash switch.
-- **Dedicated Back input** — GPIO36 hardware button with debounce handling.
+- **Live system header** — clock, battery percentage, WiFi, SD, BLE, GPS, and WebUI status indicators.
+- **Hardware flash indicator** — lightning bolt status indicator triggered by the GPIO2 flash switch.
+- **Dedicated Back input** — GPIO36 hardware button with debounce handling. No getting stuck.
 
 The goal: a high-information interface that stays readable, responsive, and consistent across the device.
 
@@ -77,7 +73,7 @@ The ESP32 handles the interface and network transport; inference is performed by
 
 ### Health Checks
 
-Eight defensive network-testing modules are available under `Others → Health Checks`.
+Eight defensive network testing modules are available under `Others → Health Checks`.
 
 | Module | Purpose |
 |---|---|
@@ -90,7 +86,7 @@ Eight defensive network-testing modules are available under `Others → Health C
 | UPnP / mDNS Exposure | Inspect local service-discovery exposure |
 | Health Report | Consolidate available diagnostic results |
 
-Designed for authorized environments, home-lab testing, and understanding the devices and services exposed on your own network.
+Designed for authorized environments, homelab testing, and understanding the devices/services exposed on your own network.
 
 ---
 
@@ -111,7 +107,7 @@ Features include:
 - Theme colors synchronized with the device UI
 - Device branding and Claude AI configuration
 
-The WebUI provides a second control surface without requiring interaction through the touchscreen for every configuration task.
+The WebUI provides a second control surface, without requiring interaction through the touchscreen for every configuration task.
 
 ---
 
@@ -226,9 +222,9 @@ Build artifacts:
 .pio/build/Deuce_v1_1/
 ```
 
-Every push is compiled through the `Deuce CI` GitHub Actions workflow. CI reports flash and RAM usage so partition constraints can be monitored before firmware is deployed.
+Every push is compiled through the `Deuce CI` GitHub Actions workflow. CI reports flash and RAM usage so partition constraints can be monitored BEFORE firmware is deployed.
 
-The legacy `Deuce` environment remains available for reference to the original stock-style menu.
+The legacy `Deuce` environment remains available for reference to the original stock style menu.
 
 ---
 
@@ -239,14 +235,14 @@ The Deuce is a personal hardware and firmware project.
 - Not a commercial product.
 - Not intended for public distribution.
 - Network testing is intended for authorized systems and environments.
-- API credentials are configured on-device and must never be committed to source control.
+- API credentials are configured on-device, and must never be committed to source control.
 
-Use the device responsibly and only against systems you own or have explicit permission to test.
+Use the device responsibly, and only against systems you *own* or have explicit permission to test.
 
 ---
 
 <p align="center">
-  <code>NO STOCK UI // NO UNNECESSARY OVERHEAD // BUILD YOUR OWN TOOLCHAIN</code>
+  <code>NO BULLSHIT // NO UNNECESSARY OVERHEAD // BUILD YOUR OWN TOOLCHAIN</code>
 </p>
 
 <p align="center">
