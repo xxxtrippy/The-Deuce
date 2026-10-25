@@ -14,6 +14,7 @@
 #ifdef DEUCE_GRID_MENU
 // THE DEUCE v1.1: home-network "Health Checks" suite (boards/deuce_v11/health_checks.cpp)
 void healthChecksMenu();
+void deuceVinDecoder(); // VIN decoder (boards/deuce_v11/deuce_vin.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -21,6 +22,7 @@ void OthersMenu::optionsMenu() {
         {"QRCodes",      qrcode_menu                  },
 #ifdef DEUCE_GRID_MENU
         {"Health Checks", healthChecksMenu            },
+        {"VIN Decoder",   deuceVinDecoder             },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)
