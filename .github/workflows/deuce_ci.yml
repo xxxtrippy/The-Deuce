@@ -72,6 +72,12 @@ jobs:
           echo "----- last 150 lines -----"
           tail -n 150 build.log 2>/dev/null || echo "no build.log"
 
+      - name: Surface errors as annotations (on failure)
+        if: failure()
+        run: |
+          grep -nE "error:|: error|fatal error|undefined reference|No such file|cannot open|multiple definition|ld returned" build.log \
+            | tail -25 | while IFS= read -r l; do echo "::error::$l"; done || true
+
       - name: Upload firmware artifact
         if: success()
         uses: actions/upload-artifact@v4
