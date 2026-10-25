@@ -675,6 +675,24 @@ static void seg14CentreFit(
     outH = chh + 4; // bounding box (for the rain reserve)
 }
 
+// Public: draw a seg14 string LEFT-aligned at (xLeft, yTop) with a fixed cell size, and
+// return its pixel width. Other Deuce modules (stopwatch / countdown) use this for big
+// LCD digits, drawing colons themselves. Declared in boards/deuce_v11/deuce_seg14.h.
+int deuceSeg14At(
+    const String &s, int xLeft, int yTop, int cw, int chh, int gap, int th, uint16_t col,
+    uint16_t bg
+) {
+    int x = xLeft;
+    for (size_t i = 0; i < s.length(); i++) {
+        char c = s[i];
+        if (c != ' ') seg14Char(c, x, yTop, cw, chh, th, col, bg);
+        x += seg14Advance(c, cw, gap);
+    }
+    return seg14Width(s, cw, gap);
+}
+// Width a seg14 string would occupy at the given cell size (no drawing).
+int deuceSeg14Width(const String &s, int cw, int gap) { return seg14Width(s, cw, gap); }
+
 // Draw one page's labels + dots. With rain on, each label reserves a TIGHT box so the
 // rain flows right up to the text but never into it -- an INVISIBLE barrier (no border
 // drawn). Labels are drawn ONCE, never per frame, so this is the lightest option.

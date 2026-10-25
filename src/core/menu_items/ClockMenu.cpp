@@ -3,6 +3,12 @@
 #include "core/settings.h"
 #include "modules/others/timer.h"
 
+#ifdef DEUCE_GRID_MENU
+// THE DEUCE v1.1: stopwatch + countdown, in boards/deuce_v11/deuce_timers.cpp
+void deuceStopwatch();
+void deuceCountdown();
+#endif
+
 void ClockMenu::optionsMenu() {
     while (!returnToMenu) {
         runClockLoop(true);
@@ -20,6 +26,10 @@ void ClockMenu::optionsMenu() {
 
 void ClockMenu::showSubMenu() {
     options = {
+#ifdef DEUCE_GRID_MENU
+        {"Stopwatch",     [=]() { deuceStopwatch(); }   },
+        {"Countdown",     [=]() { deuceCountdown(); }   },
+#endif
         {"Timer",         [=]() { Timer(); }            },
         {"Back to Clock", [=]() {}                      },
         {"Exit",          [=]() { returnToMenu = true; }}
