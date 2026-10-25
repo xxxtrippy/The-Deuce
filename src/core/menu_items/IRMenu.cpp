@@ -7,6 +7,10 @@
 #include "modules/ir/ir_jammer.h"
 #include "modules/ir/ir_read.h"
 
+#ifdef DEUCE_GRID_MENU
+void deuceIntervalometer(); // THE DEUCE v1.1: boards/deuce_v11/deuce_ir_tools.cpp
+#endif
+
 void IRMenu::optionsMenu() {
 #if defined(ARDUINO_M5STICK_S3)
     bool prevPower = M5.Power.getExtOutput();
@@ -16,6 +20,9 @@ void IRMenu::optionsMenu() {
         {"TV-B-Gone", StartTvBGone              },
         {"Custom IR", otherIRcodes              },
         {"IR Read",   [=]() { IrRead(); }       },
+#ifdef DEUCE_GRID_MENU
+        {"Intervalometer", [=]() { deuceIntervalometer(); }},
+#endif
 #if !defined(LITE_VERSION)
         {"IR Jammer", startIrJammer             }, // Simple frequency-adjustable jammer
 #endif
