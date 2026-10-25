@@ -2,8 +2,11 @@
   <img src="docs/the-deuce.jpg" alt="The Deuce" width="500">
 </p>
 
-<h1 align="center">THE DEUCE</h1>
-
+<p align="center">
+  <img src="docs/the-deuce-title-lcd14.svg"
+       alt="THE DEUCE"
+       width="500">
+</p>
 <p align="center">
   <em>A custom ESP32 handheld multitool — wireless testing, RF, IR, NFC, GPS, and an on-device Claude AI chat, wrapped in a matrix-green segmented-LCD UI.</em>
 </p>
