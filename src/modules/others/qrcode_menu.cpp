@@ -64,27 +64,31 @@ void pix_qrcode() {
 }
 
 void qrcode_menu() {
+    std::vector<Option> options = {
+        {"Create",      custom_qrcode_menu},
+        {"Saved Codes", saved_qrcode_menu },
+    };
+    addOptionToMainMenu();
+    loopOptions(options);
+    options.clear();
+}
 
+// Browse user-saved QR codes (none are preset on The Deuce). Tap one to display it.
+void saved_qrcode_menu() {
     std::vector<Option> options;
-
-    // Add QR codes from the config
     for (const auto &entry : bruceConfig.qrCodes) {
         options.push_back({entry.menuName.c_str(), lambdaHelper(qrcode_display, entry.content)});
     }
-
-    options.push_back({"PIX", pix_qrcode});
-    options.push_back({"Custom", custom_qrcode_menu});
-    addOptionToMainMenu();
-
+    if (!bruceConfig.qrCodes.empty()) options.push_back({"Remove...", remove_custom_qrcode});
+    options.push_back({"Back", qrcode_menu});
     loopOptions(options);
-    options.clear();
 }
 
 void custom_qrcode_menu() {
     options = {
         {"Display",      display_custom_qrcode  },
         {"Save&Display", save_and_display_qrcode},
-        {"Remove",       remove_custom_qrcode   },
+        {"PIX",          pix_qrcode             },
         {"Back",         qrcode_menu            }
     };
     loopOptions(options);
@@ -121,7 +125,7 @@ void remove_custom_qrcode() {
     if (bruceConfig.qrCodes.empty()) {
         displayInfo("There is nothing to remove!");
         delay(1000);
-        custom_qrcode_menu();
+        return;
     }
     std::vector<Option> options;
 
@@ -130,11 +134,11 @@ void remove_custom_qrcode() {
         options.emplace_back(entry.menuName.c_str(), [=]() {
             bruceConfig.removeQrCodeEntry(entry.menuName);
             log_i("Removed QR code: %s", entry.menuName.c_str());
-            custom_qrcode_menu();
+            saved_qrcode_menu();
         });
     }
 
-    options.emplace_back("Back", [=]() { custom_qrcode_menu(); });
+    options.emplace_back("Back", [=]() { saved_qrcode_menu(); });
 
     loopOptions(options);
 }

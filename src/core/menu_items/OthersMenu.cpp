@@ -8,7 +8,6 @@
 #include "modules/others/ibutton.h"
 #include "modules/others/mic.h"
 #include "modules/others/qrcode_menu.h"
-#include "modules/others/tururururu.h"
 #include "modules/others/u2f.h"
 // Removed: #include "modules/others/timer.h"
 
@@ -20,7 +19,6 @@ void healthChecksMenu();
 void OthersMenu::optionsMenu() {
     options = {
         {"QRCodes",      qrcode_menu                  },
-        {"Megalodon",    shark_setup                  },
 #ifdef DEUCE_GRID_MENU
         {"Health Checks", healthChecksMenu            },
 #endif

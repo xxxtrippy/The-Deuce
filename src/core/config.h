@@ -101,12 +101,7 @@ public:
 
     std::vector<String> disabledMenus = {};
 
-    std::vector<QrCodeEntry> qrCodes = {
-        {"Bruce AP",   "WIFI:T:WPA;S:BruceNet;P:brucenet;;"},
-        {"Bruce Wiki", "https://github.com/pr3y/Bruce/wiki"},
-        {"Bruce Site", "https://bruce.computer"            },
-        {"Rickroll",   "https://youtu.be/dQw4w9WgXcQ"      }
-    };
+    std::vector<QrCodeEntry> qrCodes = {}; // THE DEUCE: no presets -- user-saved codes only
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Constructor
