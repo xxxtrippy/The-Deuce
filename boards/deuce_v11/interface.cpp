@@ -693,6 +693,16 @@ int deuceSeg14At(
 // Width a seg14 string would occupy at the given cell size (no drawing).
 int deuceSeg14Width(const String &s, int cw, int gap) { return seg14Width(s, cw, gap); }
 
+// Public: poll touch once and report the live (continuous) finger position, so
+// other Deuce screens can detect swipes the same way the main-menu grid does.
+// Declared in deuce_seg14.h. live = finger down, x/y = latest mapped position.
+void deuceLiveTouch(bool &live, int &x, int &y) {
+    InputHandler();
+    live = gTouchLive;
+    x = gTouchX;
+    y = gTouchY;
+}
+
 // Draw one page's labels + dots. With rain on, each label reserves a TIGHT box so the
 // rain flows right up to the text but never into it -- an INVISIBLE barrier (no border
 // drawn). Labels are drawn ONCE, never per frame, so this is the lightest option.

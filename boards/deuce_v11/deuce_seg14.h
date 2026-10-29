@@ -6,3 +6,6 @@ int deuceSeg14At(const String &s, int xLeft, int yTop, int cw, int chh, int gap,
                  uint16_t col, uint16_t bg);
 // Width a seg14 string would occupy at the given cell size (no drawing).
 int deuceSeg14Width(const String &s, int cw, int gap);
+
+// Poll touch once; report live finger state + mapped position (for swipe detection).
+void deuceLiveTouch(bool &live, int &x, int &y);
