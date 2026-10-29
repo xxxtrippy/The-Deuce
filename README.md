@@ -161,7 +161,7 @@ A shared SPI architecture keeps the radio and storage peripherals on a tightly p
 | I²C | SCL | 2 |
 | Infrared | TX | 25 |
 | Infrared | RX | 35 |
-| GPS | NEO-6M | — |
+| GPS NEO-6M | TX | 34 |
 | Battery monitor | ADC | 39 |
 | Back button | Input | 36 |
 
