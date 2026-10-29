@@ -15,7 +15,7 @@
 
 ## `// SYST3M OVERV1EW`
 
-The Deuce is a custom built ESP32 handheld, engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
+The Deuce is a custom built ESP32xRP2040 handheld, engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
 
 Fabricated around the ESP32-WROOM-32U and a 2.4-inch touchscreen, it integrates a collection of radio interfaces, peripheral controllers, and purpose built firmware into a compact field platform.
 
@@ -123,7 +123,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 | Positioning | NEO-6M GPS |
 | NFC / RFID | PN532 |
 | Timekeeping | DS3231 RTC |
-| Magnetometer (optional) | MMC5983MA — true magnetic EMF channel for Ghost Radar / Antenna Plot |
+| Magnetometer | MMC5983MA — true magnetic EMF channel |
 | Storage | SD card |
 | Display | 2.4-inch ILI9341, 320×240 |
 | Touch | XPT2046 resistive touchscreen |
