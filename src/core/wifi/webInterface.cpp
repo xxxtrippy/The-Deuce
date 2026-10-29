@@ -26,6 +26,7 @@ IPAddress AP_GATEWAY(172, 0, 0, 1); // Gateway
 
 AsyncWebServer *server = nullptr; // initialise webserver
 #ifdef DEUCE_GRID_MENU
+#include "deuce_radio.h" // SD-backed WiFi radio routes (boards/deuce_v11, via -Iboards/deuce_v11)
 const char *host = "deuce"; // -> deuce.local  (THE DEUCE v1.1)
 #else
 const char *host = "bruce";
@@ -495,6 +496,9 @@ void configureWebServer() {
             "</body></html>";
         request->send(200, "text/html", html);
     });
+    // THE DEUCE v1.1: SD-backed synced WiFi radio station -> http://deuce.local/radio
+    deuceRadioConfigure(server);
+
     server->on("/claude", HTTP_POST, [](AsyncWebServerRequest *request) {
         if (!checkUserWebAuth(request)) {
             AsyncWebServerResponse *r = request->beginResponse(302);

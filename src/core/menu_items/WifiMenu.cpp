@@ -1,4 +1,7 @@
 #include "WifiMenu.h"
+#ifdef DEUCE_GRID_MENU
+void deuceWifiRadio(); // THE DEUCE v1.1: boards/deuce_v11/deuce_radio.cpp
+#endif
 #include "core/display.h"
 #include "core/settings.h"
 #include "core/utils.h"
@@ -93,6 +96,10 @@ void WifiMenu::optionsMenu() {
     options.push_back({"Responder", responder});
     options.push_back({"Brucegotchi", brucegotchi_start});
     options.push_back({"WiFi Pass Recovery", wifi_recover_menu});
+#endif
+
+#ifdef DEUCE_GRID_MENU
+    options.push_back({"WiFi Radio", deuceWifiRadio});
 #endif
 
     options.push_back({"Config", [this]() { configMenu(); }});
