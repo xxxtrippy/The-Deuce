@@ -12,6 +12,10 @@
 #include "modules/rf/rf_spectrum.h"
 #include "modules/rf/rf_waterfall.h"
 
+#ifdef DEUCE_GRID_MENU
+void deuceTpmsReader(); // THE DEUCE v1.1: boards/deuce_v11/deuce_tpms.cpp
+#endif
+
 void RFMenu::optionsMenu() {
     options = {
         {"Scan/copy",       [=]() { RFScan(); }       },
@@ -20,6 +24,9 @@ void RFMenu::optionsMenu() {
         {"Custom SubGhz",   sendCustomRF              },
 #endif
         {"Spectrum",        rf_spectrum               },
+#ifdef DEUCE_GRID_MENU
+        {"TPMS",            [=]() { deuceTpmsReader(); }},
+#endif
 #if !defined(LITE_VERSION)
         {"RSSI Spectrum",   rf_CC1101_rssi            }, // @Pirata
         {"SquareWave Spec", rf_SquareWave             }, // @Pirata
