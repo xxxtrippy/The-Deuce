@@ -293,6 +293,116 @@ static String encodeBarcode(BcType t, const String &data, bool &ok) {
     }
 }
 
+// ====================================================================== PNG export
+// Minimal 8-bit grayscale PNG writer (color type 0) using zlib "stored" (uncompressed)
+// deflate blocks. Host-verified bit-exact against PIL before porting. Writes straight
+// to an open SD File, one scanline at a time, so no full-image RAM buffer is needed.
+
+static uint32_t pngCrcTable[256];
+static bool pngCrcReady = false;
+static void pngCrcInit() {
+    for (uint32_t n = 0; n < 256; n++) {
+        uint32_t c = n;
+        for (int k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320u ^ (c >> 1)) : (c >> 1);
+        pngCrcTable[n] = c;
+    }
+    pngCrcReady = true;
+}
+static uint32_t pngCrc(uint32_t crc, const uint8_t *buf, size_t len) {
+    if (!pngCrcReady) pngCrcInit();
+    crc ^= 0xffffffffu;
+    for (size_t i = 0; i < len; i++) crc = pngCrcTable[(crc ^ buf[i]) & 0xff] ^ (crc >> 8);
+    return crc ^ 0xffffffffu;
+}
+static uint32_t pngAdler(uint32_t adler, const uint8_t *buf, size_t len) {
+    uint32_t s1 = adler & 0xffff, s2 = (adler >> 16) & 0xffff;
+    for (size_t i = 0; i < len; i++) {
+        s1 = (s1 + buf[i]) % 65521;
+        s2 = (s2 + s1) % 65521;
+    }
+    return (s2 << 16) | s1;
+}
+static void pngPutU32(File &f, uint32_t v) {
+    uint8_t b[4] = {(uint8_t)(v >> 24), (uint8_t)(v >> 16), (uint8_t)(v >> 8), (uint8_t)v};
+    f.write(b, 4);
+}
+static void pngChunk(File &f, const char *type, const uint8_t *data, uint32_t len) {
+    pngPutU32(f, len);
+    f.write((const uint8_t *)type, 4);
+    if (len) f.write(data, len);
+    uint32_t crc = pngCrc(0, (const uint8_t *)type, 4);
+    if (len) crc = pngCrc(crc, data, len);
+    pngPutU32(f, crc);
+}
+
+// Write the barcode module string as a PNG at /barcodes/<name>.png. Returns true on ok.
+// Streams the IDAT one scanline at a time (one "stored" deflate block per row) so RAM
+// use is just a single row buffer -- important on the no-PSRAM WROOM. The IDAT byte
+// length is deterministic, so we write length + "IDAT" up front, stream the payload
+// while accumulating the chunk CRC, then write the CRC.
+static bool writeBarcodePng(const String &path, const String &bits, const String &human) {
+    const int scale = 3, quiet = 10, barH = 90; // simple, scanner-friendly
+    int modules = bits.length();
+    int W = (modules + 2 * quiet) * scale;
+    int H = barH;
+    if (W <= 0 || H <= 0 || (W + 1) > 65535) return false; // one row per stored block
+
+    if (!sdcardMounted && !setupSdCard()) return false;
+    if (!SD.exists("/barcodes")) SD.mkdir("/barcodes");
+    File f = SD.open(path, FILE_WRITE);
+    if (!f) return false;
+
+    static const uint8_t sig[8] = {137, 80, 78, 71, 13, 10, 26, 10};
+    f.write(sig, 8);
+    uint8_t ihdr[13] = {(uint8_t)(W >> 24), (uint8_t)(W >> 16), (uint8_t)(W >> 8), (uint8_t)W,
+                        (uint8_t)(H >> 24), (uint8_t)(H >> 16), (uint8_t)(H >> 8), (uint8_t)H,
+                        8, 0, 0, 0, 0};
+    pngChunk(f, "IHDR", ihdr, 13);
+
+    // One identical pixel row (grayscale bytes). RAM: W bytes only.
+    uint8_t *row = (uint8_t *)malloc(W);
+    if (!row) { f.close(); return false; }
+    for (int x = 0; x < W; x++) {
+        int mod = x / scale;
+        uint8_t px = 0xFF;
+        if (mod >= quiet && mod < quiet + modules) px = (bits[mod - quiet] == '1') ? 0x00 : 0xFF;
+        row[x] = px;
+    }
+    size_t scan = (size_t)W + 1;                   // filter byte + pixels
+
+    // Deterministic IDAT length: 2 (zlib hdr) + H*(5 + scan) (stored blocks) + 4 (adler).
+    uint32_t idatLen = 2 + (uint32_t)H * (5 + scan) + 4;
+    pngPutU32(f, idatLen);
+    const char idatType[4] = {'I', 'D', 'A', 'T'};
+    f.write((const uint8_t *)idatType, 4);
+    uint32_t crc = pngCrc(0, (const uint8_t *)idatType, 4);
+
+    auto emit = [&](const uint8_t *p, size_t n) { f.write(p, n); crc = pngCrc(crc, p, n); };
+
+    uint8_t zh[2] = {0x78, 0x01};
+    emit(zh, 2);
+    uint32_t adler = 1;
+    uint8_t filt = 0x00;
+    for (int y = 0; y < H; y++) {
+        uint8_t hdr[5];
+        hdr[0] = (y == H - 1) ? 1 : 0;             // BFINAL on last block
+        hdr[1] = scan & 0xff; hdr[2] = (scan >> 8) & 0xff;
+        uint16_t nlen = ~((uint16_t)scan);
+        hdr[3] = nlen & 0xff; hdr[4] = (nlen >> 8) & 0xff;
+        emit(hdr, 5);
+        emit(&filt, 1);  adler = pngAdler(adler, &filt, 1);
+        emit(row, W);    adler = pngAdler(adler, row, W);
+    }
+    uint8_t ab[4] = {(uint8_t)(adler >> 24), (uint8_t)(adler >> 16), (uint8_t)(adler >> 8), (uint8_t)adler};
+    emit(ab, 4);
+    pngPutU32(f, crc); // chained pngCrc() cancels its own fold, so this is the final CRC
+    free(row);
+
+    pngChunk(f, "IEND", nullptr, 0);
+    f.close();
+    return true;
+}
+
 // ====================================================================== render
 static void renderBarcode(BcType t, const String &data) {
     bool ok = false;
@@ -447,6 +557,51 @@ static void saveBarcode() {
     }
 }
 
+// Sanitize a user string into a safe SD filename stem.
+static String safeStem(const String &in) {
+    String out;
+    for (size_t i = 0; i < in.length(); i++) {
+        char c = in[i];
+        if (isalnum((unsigned char)c) || c == '-' || c == '_') out += c;
+        else out += '_';
+    }
+    if (out.length() == 0) out = "barcode";
+    if (out.length() > 24) out = out.substring(0, 24);
+    return out;
+}
+
+// Encode + write a PNG to /barcodes/<stem>.png on SD.
+static void exportPng(BcType t, const String &data, const String &nameHint) {
+    bool ok = false;
+    String bits = encodeBarcode(t, data, ok);
+    if (!ok || bits.length() == 0) {
+        displayError("Invalid data for " + String(BC_NAMES[t]), true);
+        return;
+    }
+    String stem = safeStem(nameHint.length() ? nameHint : data);
+    String path = "/barcodes/" + stem + ".png";
+    // avoid clobbering: append -1, -2, ... if it exists
+    if (sdcardMounted || setupSdCard()) {
+        int n = 1;
+        while (SD.exists(path) && n < 100) { path = "/barcodes/" + stem + "-" + String(n++) + ".png"; }
+    }
+    if (writeBarcodePng(path, bits, data)) displayInfo("Saved " + path, true);
+    else displayError("PNG write failed (SD?)", true);
+}
+
+// PNG-export flow from the Create menu: pick type, enter data + name, write file.
+static void exportBarcodePng() {
+    BcType t = pickType();
+    if (t == BC_COUNT) return;
+    bool numeric = (t == BC_EAN13 || t == BC_UPCA || t == BC_CODE11);
+    String data = numeric ? num_keyboard("", 32, "Data:") : keyboard("", 32, "Data:");
+    data.trim();
+    if (data.length() == 0) return;
+    String name = keyboard("", 24, "File name (opt):");
+    name.trim();
+    exportPng(t, data, name);
+}
+
 static void savedBarcodesMenu();
 
 static void removeBarcode() {
@@ -469,13 +624,22 @@ static void removeBarcode() {
     options.clear();
 }
 
+static void savedItemActions(SavedBc item) {
+    options.clear();
+    options.push_back({"Display", [item]() { renderBarcode(item.type, item.data); }});
+    options.push_back({"Export PNG", [item]() { exportPng(item.type, item.data, item.name); }});
+    options.push_back({"Back", []() {}});
+    loopOptions(options, MENU_TYPE_SUBMENU, item.name.c_str());
+    options.clear();
+}
+
 static void savedBarcodesMenu() {
     std::vector<SavedBc> list = loadSaved();
     options.clear();
     for (const auto &s : list) {
         SavedBc item = s;
         String label = s.name + " (" + BC_NAMES[s.type] + ")";
-        options.push_back({label.c_str(), [item]() { renderBarcode(item.type, item.data); }});
+        options.push_back({label.c_str(), [item]() { savedItemActions(item); }});
     }
     if (!list.empty()) options.push_back({"Remove...", removeBarcode});
     options.push_back({"Back", []() {}});
@@ -487,6 +651,7 @@ void deuceBarcodeMenu() {
     options = {
         {"Create",      createBarcode     },
         {"Save&Display", saveBarcode      },
+        {"Export PNG",  exportBarcodePng  },
         {"Saved Codes", savedBarcodesMenu },
     };
     addOptionToMainMenu();
