@@ -14,6 +14,7 @@
 #include <math.h>
 
 #include "core/display.h"
+#include "deuce_mmc5983.h"        // optional magnetometer (true magnetic EMF channel)
 #include "deuce_seg14.h"
 #include "modules/rf/rf_utils.h" // initRfModule/deinitRfModule/setMHZ + ELECHOUSE_cc1101
 
@@ -42,6 +43,7 @@ static const char *GHOST_SENS_NAME[3] = {"HIGH", "MED", "LOW"};
 #define GHOST_BLIPS 28
 struct GhostBlip {
     bool used;
+    bool mag;    // true = magnetic (red), false = RF (green)
     float ang;   // radians
     int rad;     // pixels from center
     uint32_t born;
@@ -58,6 +60,12 @@ static float g_peakAct = 0;
 static float g_peakFreq = 0;
 static int g_peakRssi = -120;
 
+// magnetometer (optional, auto-detected)
+static bool g_magPresent = false;
+static bool g_magInit = false;
+static float g_magBaseline = 0; // milligauss
+static float g_magPeak = 0;     // milligauss deviation
+
 static uint16_t ghostLerp565(uint16_t a, uint16_t b, uint8_t t) {
     int ar = (a >> 11) & 31, ag = (a >> 5) & 63, ab = a & 31;
     int br = (b >> 11) & 31, bg = (b >> 5) & 63, bb = b & 31;
@@ -67,8 +75,9 @@ static uint16_t ghostLerp565(uint16_t a, uint16_t b, uint8_t t) {
     return (uint16_t)((r << 11) | (g << 5) | bl);
 }
 
-static void ghostAddBlip(float ang, int rad) {
+static void ghostAddBlip(float ang, int rad, bool mag) {
     g_blips[g_blipHead].used = true;
+    g_blips[g_blipHead].mag = mag;
     g_blips[g_blipHead].ang = ang;
     g_blips[g_blipHead].rad = rad;
     g_blips[g_blipHead].born = millis();
@@ -93,7 +102,8 @@ static void ghostDrawFrame() {
     tft.setTextSize(1);
     tft.setTextColor(pri, bg);
     tft.drawString("GHOST RADAR", 6, 6);
-    String s = String("SENS:") + GHOST_SENS_NAME[g_sensIdx];
+    const char *src = g_magPresent ? "MAG+RF" : "RF";
+    String s = String(src) + "  SENS:" + GHOST_SENS_NAME[g_sensIdx];
     tft.setTextColor(sec, bg);
     tft.drawString(s, W - 6 - tft.textWidth(s), 6);
     tft.drawFastHLine(0, GHOST_HDR - 2, W, sec);
@@ -122,7 +132,6 @@ static void ghostPointOnRadar(float ang, int rad, int &x, int &y) {
 
 static void ghostDrawBlips() {
     uint16_t bg = bruceConfig.bgColor;
-    uint16_t ghost = TFT_GREEN;
     uint32_t now = millis();
     for (int i = 0; i < GHOST_BLIPS; i++) {
         if (!g_blips[i].used) continue;
@@ -132,7 +141,7 @@ static void ghostDrawBlips() {
             continue;
         }
         uint8_t t = (uint8_t)(age * 255 / GHOST_BLIP_MS); // 0 fresh -> 255 old
-        uint16_t c = ghostLerp565(ghost, bg, t);
+        uint16_t c = ghostLerp565(g_blips[i].mag ? TFT_RED : TFT_GREEN, bg, t);
         int x, y;
         ghostPointOnRadar(g_blips[i].ang, g_blips[i].rad, x, y);
         int sz = age < 500 ? 4 : 3;
@@ -180,17 +189,25 @@ static void ghostDrawMeter() {
         }
     }
 
-    // peak readout
+    // peak readout: magnetic (mG) when the sensor is fitted, plus RF peak
     int ty = by + 5 * (bh + gap) + 6;
-    tft.fillRect(px, ty, W - px - 4, 26, bg);
-    tft.setTextColor(pri, bg);
-    char line1[20];
-    snprintf(line1, sizeof(line1), "%d dBm", g_peakRssi);
-    tft.drawString(line1, px, ty);
-    char line2[20];
-    snprintf(line2, sizeof(line2), "%d MHz", (int)(g_peakFreq + 0.5f));
-    tft.setTextColor(sec, bg);
-    tft.drawString(line2, px, ty + 12);
+    tft.fillRect(px, ty, W - px - 4, 38, bg);
+    char line1[24], line2[24];
+    if (g_magPresent) {
+        tft.setTextColor(TFT_RED, bg);
+        snprintf(line1, sizeof(line1), "%.1f mG", g_magPeak);
+        tft.drawString(line1, px, ty);
+        tft.setTextColor(TFT_GREEN, bg);
+        snprintf(line2, sizeof(line2), "%d dBm", g_peakRssi);
+        tft.drawString(line2, px, ty + 13);
+    } else {
+        tft.setTextColor(pri, bg);
+        snprintf(line1, sizeof(line1), "%d dBm", g_peakRssi);
+        tft.drawString(line1, px, ty);
+        tft.setTextColor(sec, bg);
+        snprintf(line2, sizeof(line2), "%d MHz", (int)(g_peakFreq + 0.5f));
+        tft.drawString(line2, px, ty + 13);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -209,6 +226,12 @@ void deuceGhostRadar() {
     g_peakFreq = 0;
     g_peakRssi = -120;
 
+    // optional true-magnetic EMF channel (auto-detected on the shared I2C bus)
+    g_magPresent = mmcBegin();
+    g_magInit = false;
+    g_magBaseline = 0;
+    g_magPeak = 0;
+
     float savedFreq = bruceConfigPins.rfFreq;
     if (!initRfModule("rx", g_freqs[0])) {
         bruceConfigPins.rfFreq = savedFreq;
@@ -224,6 +247,7 @@ void deuceGhostRadar() {
     int idx = 0;
     uint32_t lastFrame = millis();
     uint32_t lastDecay = millis();
+    uint32_t lastSR = millis();
 
     while (true) {
         if (check(EscPress)) break;
@@ -265,7 +289,7 @@ void deuceGhostRadar() {
             int rad = (int)((activity / 30.0f) * (RR - 6));
             if (rad < RR / 4) rad = RR / 4;
             if (rad > RR - 4) rad = RR - 4;
-            ghostAddBlip(ang, rad);
+            ghostAddBlip(ang, rad, false); // RF = green
             if (activity > g_peakAct) {
                 g_peakAct = activity;
                 g_peakFreq = f;
@@ -277,6 +301,41 @@ void deuceGhostRadar() {
         int lvlNow = ghostLevelFromAct(activity);
         if (lvlNow > g_level) g_level = lvlNow;
 
+        // --- magnetic (true EMF) channel -----------------------------------
+        if (g_magPresent) {
+            float gx, gy, gz;
+            if (mmcReadGauss(gx, gy, gz)) {
+                float mG = sqrtf(gx * gx + gy * gy + gz * gz) * 1000.0f; // milligauss
+                if (!g_magInit) {
+                    g_magBaseline = mG;
+                    g_magInit = true;
+                }
+                float dev = mG - g_magBaseline;
+                if (dev < 0) dev = -dev;
+                g_magBaseline += (mG - g_magBaseline) * 0.02f; // slow baseline track
+
+                // K-II-style milligauss thresholds, scaled by sensitivity preset
+                float scale = GHOST_SENS[g_sensIdx] / 7.0f;
+                int magLvl = 0;
+                if (dev > 1.5f * scale) magLvl = 1;
+                if (dev > 3.0f * scale) magLvl = 2;
+                if (dev > 6.0f * scale) magLvl = 3;
+                if (dev > 12.0f * scale) magLvl = 4;
+                if (dev > 20.0f * scale) magLvl = 5;
+                if (magLvl > g_level) g_level = magLvl;
+
+                if (magLvl >= 1) {
+                    // bearing from the horizontal field direction -> points at the source
+                    float bang = atan2f(gy, gx);
+                    int mrad = (int)((dev / 24.0f) * (RR - 6));
+                    if (mrad < RR / 4) mrad = RR / 4;
+                    if (mrad > RR - 4) mrad = RR - 4;
+                    ghostAddBlip(bang, mrad, true); // magnetic = red
+                    if (dev > g_magPeak) g_magPeak = dev;
+                }
+            }
+        }
+
         // redraw radar disc + blips + sweep
         ghostDrawRadarBase();
         ghostDrawBlips();
@@ -287,11 +346,18 @@ void deuceGhostRadar() {
             lastDecay = millis();
             if (g_level > 0) g_level--;
             g_peakAct *= 0.6f;
+            g_magPeak *= 0.6f;
             if (g_peakAct < 2) {
                 g_peakRssi = -120;
                 g_peakFreq = 0;
             }
             ghostDrawMeter();
+        }
+
+        // periodic degauss keeps the AMR bridge offset honest
+        if (g_magPresent && millis() - lastSR > 5000) {
+            lastSR = millis();
+            mmcSetReset();
         }
 
         idx = (idx + 1) % g_nf;
