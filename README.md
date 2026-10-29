@@ -123,6 +123,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 | Positioning | NEO-6M GPS |
 | NFC / RFID | PN532 |
 | Timekeeping | DS3231 RTC |
+| Magnetometer (optional) | MMC5983MA — true magnetic EMF channel for Ghost Radar / Antenna Plot |
 | Storage | SD card |
 | Display | 2.4-inch ILI9341, 320×240 |
 | Touch | XPT2046 resistive touchscreen |
@@ -192,6 +193,15 @@ Current development targets:
 - [x] Max WiFi TX power (20 dBm) & BLE TX power (+9 dBm)
 - [x] QR Saved Codes tab
 - [x] TPMS reader — Toyota, Ford, Nissan, Schrader/GM (315 / 433.92 MHz)
+- [x] Ghost Radar — RF field-strength sweep + optional MMC5983MA magnetometer (true EMF), self-calibrating
+- [x] Faraday cage / RF-shielding tester (CC1101 RSSI attenuation + verdict)
+- [x] Antenna Plot — live measured polar RSSI-vs-bearing pattern (magnetometer or stepped)
+- [x] WiFi Radio — SD-backed synced web radio station (browser player, up to ~8 listeners)
+- [x] Resistor color-code calculator — 4/5/6 band with reversed-entry detection
+- [x] Crypto tracker — top coins, 2×2 swipe grid with 24h sparklines
+- [x] Money tracker — USD vs GBP/EUR/CAD/CNY/JPY/AUD/MXN/INR with trend sparklines
+- [x] Key Copier — mechanical key bitting visualizer
+- [x] Web USB flasher — browser WebSerial installer (esp-web-tools), auto-published by CI
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
 
@@ -224,6 +234,12 @@ Build artifacts:
 ```
 
 Every push is compiled through the `Deuce CI` GitHub Actions workflow. CI reports flash and RAM usage so partition constraints can be monitored BEFORE firmware is deployed.
+
+### Web flasher
+
+On every `main` build, CI publishes a browser-based **WebSerial installer** (esp-web-tools) to GitHub Pages at `https://xxxtrippy.github.io/The-Deuce/`. Open it in Chrome/Edge on desktop, connect the Deuce over USB, and flash the latest build with one click — no toolchain required. It writes bootloader + partitions + app by region, so LittleFS (API key, saved data) is preserved.
+
+> OTA (WiFi/Bluetooth) updating is not possible on the 4 MB single-slot layout — dual-OTA needs two ~3.8 MB app slots, which do not fit. USB (the web flasher or `pio -t upload`) is the update path.
 
 The legacy `Deuce` environment remains available for reference to the original stock style menu.
 
