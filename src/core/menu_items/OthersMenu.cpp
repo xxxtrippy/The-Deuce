@@ -15,6 +15,7 @@
 // THE DEUCE v1.1: home-network "Health Checks" suite (boards/deuce_v11/health_checks.cpp)
 void healthChecksMenu();
 void deuceVinDecoder(); // VIN decoder (boards/deuce_v11/deuce_vin.cpp)
+void deuceLockCalc();   // Lock combo calculator (boards/deuce_v11/deuce_lock.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -23,6 +24,7 @@ void OthersMenu::optionsMenu() {
 #ifdef DEUCE_GRID_MENU
         {"Health Checks", healthChecksMenu            },
         {"VIN Decoder",   deuceVinDecoder             },
+        {"Lock Calc",     deuceLockCalc               },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)
