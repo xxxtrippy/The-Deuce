@@ -182,13 +182,14 @@ Partition configuration: `custom_4Mb_deuce.csv`
 Current development targets:
 
 - [x] Stopwatch and countdown timer `99:99:99`
-- [ ] Barcode generation via Code 128, UPC-A, EAN-13, Code 93, Code 39, Code 11
-- [ ] Live barcode display & PNG export to SD
-- [ ] IR appliance library with SD-backed code database and browser
+- [x] Barcode generation via Code 128, UPC-A, EAN-13, Code 93, Code 39, Code 11
+- [x] Live barcode display & PNG export to SD
+- [x] IR appliance library with SD-backed code database and browser
 - [x] Intervalometer
 - [x] VIN decoder — offline WMI lookup & online NHTSA lookup
-- [ ] Lock combination calculator
-- [ ] Sentry Safe I²C interface
+- [x] Lock combination calculator
+- [x] I²C main menu with RFID nested inside
+- [x] Max WiFi TX power (20 dBm) & BLE TX power (+9 dBm)
 - [x] QR Saved Codes tab
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
