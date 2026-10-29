@@ -21,6 +21,7 @@ void deuceGhostRadar();  // RF field-strength "ghost radar" (boards/deuce_v11/de
 void deuceResistorCalc(); // resistor color-code calculator (boards/deuce_v11/deuce_resistor.cpp)
 void deuceCrypto();       // live crypto tracker (boards/deuce_v11/deuce_markets.cpp)
 void deuceMoney();        // live currency tracker (boards/deuce_v11/deuce_markets.cpp)
+void deuceKeyCopier();    // key bitting visualizer (boards/deuce_v11/deuce_keycopier.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -35,6 +36,7 @@ void OthersMenu::optionsMenu() {
         {"Resistor Calc", deuceResistorCalc           },
         {"Crypto",        deuceCrypto                 },
         {"Money",         deuceMoney                  },
+        {"Key Copier",    deuceKeyCopier              },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)
