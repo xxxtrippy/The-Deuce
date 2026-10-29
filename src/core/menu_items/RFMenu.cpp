@@ -13,7 +13,8 @@
 #include "modules/rf/rf_waterfall.h"
 
 #ifdef DEUCE_GRID_MENU
-void deuceTpmsReader(); // THE DEUCE v1.1: boards/deuce_v11/deuce_tpms.cpp
+void deuceTpmsReader();  // THE DEUCE v1.1: boards/deuce_v11/deuce_tpms.cpp
+void deuceFaradayTest(); // THE DEUCE v1.1: boards/deuce_v11/deuce_faraday.cpp
 #endif
 
 void RFMenu::optionsMenu() {
@@ -26,6 +27,7 @@ void RFMenu::optionsMenu() {
         {"Spectrum",        rf_spectrum               },
 #ifdef DEUCE_GRID_MENU
         {"TPMS",            [=]() { deuceTpmsReader(); }},
+        {"Faraday Test",    [=]() { deuceFaradayTest(); }},
 #endif
 #if !defined(LITE_VERSION)
         {"RSSI Spectrum",   rf_CC1101_rssi            }, // @Pirata
