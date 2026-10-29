@@ -17,6 +17,7 @@ void healthChecksMenu();
 void deuceVinDecoder(); // VIN decoder (boards/deuce_v11/deuce_vin.cpp)
 void deuceLockCalc();   // Lock combo calculator (boards/deuce_v11/deuce_lock.cpp)
 void deuceBarcodeMenu(); // 1D barcode generator (boards/deuce_v11/deuce_barcode.cpp)
+void deuceGhostRadar();  // RF field-strength "ghost radar" (boards/deuce_v11/deuce_ghost.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -27,6 +28,7 @@ void OthersMenu::optionsMenu() {
         {"VIN Decoder",   deuceVinDecoder             },
         {"Lock Calc",     deuceLockCalc               },
         {"Barcodes",      deuceBarcodeMenu            },
+        {"Ghost Radar",   deuceGhostRadar             },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)
