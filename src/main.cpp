@@ -512,19 +512,22 @@ void setup() {
 
     RAM_LOG("before-wifi-init"); // largest contiguous internal block here gates Wi-Fi/BLE
 
-    // Set WiFi country to avoid warnings and ensure max power
+    // Set WiFi country, then force TX power to the hardware ceiling. The country's
+    // max_tx_power caps the radio, so raise it to the max too (the PHY still clamps to
+    // whatever the chip supports -- ~20 dBm on the WROOM). Units for
+    // esp_wifi_set_max_tx_power are 0.25 dBm, so 84 = 21 dBm (requests the absolute max;
+    // the driver clamps down to the PHY limit). set_country is applied FIRST so the
+    // final set_max_tx_power is not re-limited by the country policy.
     const wifi_country_t country = {
         .cc = "US",
         .schan = 1,
         .nchan = 14,
-#ifdef CONFIG_ESP_PHY_MAX_TX_POWER
-        .max_tx_power = CONFIG_ESP_PHY_MAX_TX_POWER, // 20
-#endif
+        .max_tx_power = 84, // 21 dBm requested; PHY clamps to its real max
         .policy = WIFI_COUNTRY_POLICY_MANUAL
     };
 
-    esp_wifi_set_max_tx_power(80); // 80 translates to 20dBm
     esp_wifi_set_country(&country);
+    esp_wifi_set_max_tx_power(84); // absolute max; clamps to the WROOM's ~20 dBm ceiling
 
     // Some GPIO Settings (such as CYD's brightness control must be set after tft and sdcard)
     _post_setup_gpio();

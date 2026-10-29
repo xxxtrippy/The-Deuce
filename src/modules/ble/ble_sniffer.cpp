@@ -115,6 +115,7 @@ void BLE_Sniffer() {
             if (isCapturing) {
                 if (firstRun) {
                     NimBLEDevice::init("BruceSniffer");
+                    NimBLEDevice::setPower(ESP_PWR_LVL_P9); // max BLE TX power (+9 dBm)
                     vTaskDelay(10 / portTICK_PERIOD_MS);
                     pSnifferScan = NimBLEDevice::getScan();
                     if (!pSnifferScan) {

@@ -100,6 +100,7 @@ void BLENinebot::setup() {
     tft.setTextColor(bruceConfig.priColor, bruceConfig.bgColor);
 
     NimBLEDevice::init("");
+    NimBLEDevice::setPower(ESP_PWR_LVL_P9); // max BLE TX power (+9 dBm)
     pBLEScan = NimBLEDevice::getScan();
     pBLEScan->setActiveScan(true);
     pBLEScan->setInterval(SCAN_INTERVAL);

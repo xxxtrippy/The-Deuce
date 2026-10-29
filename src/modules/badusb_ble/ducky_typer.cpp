@@ -612,6 +612,7 @@ void ducky_startKb(HIDInterface *&hid, bool ble, int functionId) {
             if (!NimBLEDevice::isInitialized()) {
                 Serial.println("[ducky_startKb] Initializing BLE stack...");
                 NimBLEDevice::init(std::string(deviceName.c_str()));
+                NimBLEDevice::setPower(ESP_PWR_LVL_P9); // max BLE TX power (+9 dBm)
                 Serial.println("[ducky_startKb] BLE stack initialized");
                 delay(50);
             } else {

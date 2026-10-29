@@ -785,7 +785,7 @@ bool deuceMainMenuGrid(std::vector<Option> &opts, int &idx) {
     add("BLE", "BT");                    //         BL  BR
     add("NRF24", "NRF");
     add("RF", "RF");
-    add("RFID", "RFID");                 // page 2
+    add("I2C", "I2C");                   // page 2 (RFID now lives inside the I2C menu)
     add("IR", "IR");
     add("GPS", "GPS");
     add("Others", "Others");             // swapped with Clock

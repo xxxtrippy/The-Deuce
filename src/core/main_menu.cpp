@@ -33,7 +33,7 @@ MainMenu::MainMenu() {
         &ethernetMenu,
 #endif
         &gpsMenu,
-        &rfidMenu,
+        &i2cMenu, // THE DEUCE v1.1: I2C menu replaces RFID at top level; RFID now lives inside it
         &fileMenu,
 #if !defined(LITE_VERSION) && !defined(DISABLE_INTERPRETER)
         &scriptsMenu,

@@ -11,6 +11,7 @@
 #include "menu_items/FMMenu.h"
 #include "menu_items/FileMenu.h"
 #include "menu_items/GpsMenu.h"
+#include "menu_items/I2CMenu.h"
 #include "menu_items/IRMenu.h"
 #include "menu_items/LoRaMenu.h"
 #include "menu_items/NRF24.h"
@@ -28,6 +29,7 @@ public:
     ConfigMenu configMenu;
     FMMenu fmMenu;
     GpsMenu gpsMenu;
+    I2CMenu i2cMenu;
     IRMenu irMenu;
     NRF24Menu nrf24Menu;
     OthersMenu othersMenu;
