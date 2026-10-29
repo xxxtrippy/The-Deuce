@@ -826,11 +826,19 @@ bool deuceMainMenuGrid(std::vector<Option> &opts, int &idx) {
     const int SWIPE_MIN = 40;              // net horiz travel actually needed to flip a page
     const unsigned long TAP_MAX_MS = 500;  // a tap must press+release within this; longer = hold
 
+    // XPT2046 settling: the first few SPI reads after boot (or after heavy display
+    // writes in the boot animation) can produce phantom touches. Flush them here,
+    // then start with prevLive=true so the grid requires a clean lift -> press ->
+    // lift cycle before registering the first tap. Without this, a phantom on boot
+    // is misclassified as a tap and rapidly cycles grid -> submenu -> grid.
+    for (int i = 0; i < 6; i++) { InputHandler(); delay(8); }
+    EscPress = SelPress = NextPress = PrevPress = AnyKeyPress = false;
+
     bool redraw = true;               // full redraw (resets rain) -- entry / op-return
     bool pageDirty = false;           // page changed via swipe (keeps rain running)
     unsigned long clockTs = millis(); // last 1s clock + status tick
     // gesture state
-    bool prevLive = gTouchLive; // if a finger is already down, wait for release first
+    bool prevLive = true; // require a real lift before accepting the first press
     bool tracking = false;
     bool swipeCommitted = false; // set once the finger moves -> release will NOT tap
     int sx0 = 0, sy0 = 0, maxdx = 0, maxdy = 0;
