@@ -9,6 +9,7 @@
 
 #ifdef DEUCE_GRID_MENU
 void deuceIntervalometer(); // THE DEUCE v1.1: boards/deuce_v11/deuce_ir_tools.cpp
+void deuceIrLibrary();      // THE DEUCE v1.1: boards/deuce_v11/deuce_ir_library.cpp
 #endif
 
 void IRMenu::optionsMenu() {
@@ -21,6 +22,7 @@ void IRMenu::optionsMenu() {
         {"Custom IR", otherIRcodes              },
         {"IR Read",   [=]() { IrRead(); }       },
 #ifdef DEUCE_GRID_MENU
+        {"IR Library",     [=]() { deuceIrLibrary(); }     },
         {"Intervalometer", [=]() { deuceIntervalometer(); }},
 #endif
 #if !defined(LITE_VERSION)

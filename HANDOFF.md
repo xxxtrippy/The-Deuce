@@ -16,13 +16,19 @@ Context for picking this build up in a fresh chat.
 
 ## Last 5 firmware edits/additions (newest first — all CI-green)
 
-1. **Barcode SD PNG export** — `deuce_barcode.cpp`: added a minimal 8-bit grayscale PNG writer
+1. **IR appliance library** (IR → IR Library) — `boards/deuce_v11/deuce_ir_library.{cpp,h}`, wired
+   in `IRMenu.cpp`. Universal-remote browser over an SD code DB at `/ir_library.txt` (pipe-delimited
+   `Category|Brand|Function|Protocol|Address|Command`, or `...|RAW|<freqHz>|<raw durations>`; `#`
+   comments). Browses **Category → Brand → Function** and transmits via Bruce's `sendIRCommand()`
+   (NEC/NECext/RC5/RC6/Samsung32/SIRC/Kaseikyo/raw). Writes a small starter DB (common TV power/vol
+   codes for Samsung/LG/Sony/Panasonic + a few others) on first run if the file is missing.
+2. **Barcode SD PNG export** — `deuce_barcode.cpp`: added a minimal 8-bit grayscale PNG writer
    (zlib *stored* blocks, **streamed one scanline per deflate block** so RAM stays at one row
    buffer — safe on the no-PSRAM WROOM). Writes to `/barcodes/<name>.png` (auto `-N` suffix to
    avoid clobber). New menu entry **Export PNG** (pick type → data → optional filename) and an
    **Export PNG** action on each **Saved Code**. PNG writer host-verified bit-exact against PIL
    (valid file, pixels match the pattern, quiet zone white). scale=3px/module, 90px tall.
-2. **Barcodes** (Others → Barcodes) — `boards/deuce_v11/deuce_barcode.{cpp,h}`, wired in
+3. **Barcodes** (Others → Barcodes) — `boards/deuce_v11/deuce_barcode.{cpp,h}`, wired in
    `OthersMenu.cpp`. Offline 1D generator. Six symbologies: Code128 (auto B/C), UPC-A, EAN-13,
    Code93, Code39, Code11; check digits auto-computed where applicable. Menu = Create /
    Save&Display / Export PNG / Saved Codes. Saved list lives on **SD** at `/barcodes.txt`
@@ -30,17 +36,14 @@ Context for picking this build up in a fresh chat.
    bit-for-bit (EAN-13 vs the 5901234123457 reference, Code39 vs an independent width table,
    Code128 table+mod-103 checksum vs known codewords, Code11 canonical USS widths, Code93 full
    47-pattern table so C/K checks ≥43 index valid patterns).
-3. **Lock combo calculator** (Others → Lock Calc) — `boards/deuce_v11/deuce_lock.{cpp,h}`, wired in
+4. **Lock combo calculator** (Others → Lock Calc) — `boards/deuce_v11/deuce_lock.{cpp,h}`, wired in
    `OthersMenu.cpp`. Offline Master-style 40-position dial recovery: user enters the 3rd number
    (from the shackle-tension "sticking point" test); fixed modular relationship fixes 1st/2nd to
    40 candidates (plus ±1 third-number neighbor blocks for drift). Pure integer math, no network;
    `num_keyboard()` input, `ScrollableTextArea` output.
-4. **VIN Decoder** (Others → VIN Decoder) — `boards/deuce_v11/deuce_vin.{cpp,h}`, wired in
+5. **VIN Decoder** (Others → VIN Decoder) — `boards/deuce_v11/deuce_vin.{cpp,h}`, wired in
    `OthersMenu.cpp`. Offline: 17-char + check-digit validation, WMI→make (~100 makes), region,
    model year; Online: NHTSA vPIC full decode over WiFi.
-5. **Intervalometer** (IR → Intervalometer) — `boards/deuce_v11/deuce_ir_tools.{cpp,h}`, wired in
-   `IRMenu.cpp`. Nikon/Canon/Pentax shutter codes + Custom raw; interval + shot count via
-   `sendRawCommand()`.
 
 ## Pinout
 
@@ -62,7 +65,7 @@ Context for picking this build up in a fresh chat.
 header, boot anim, touch handler, `deuceSeg14At/Width`) · `claude_chat.{cpp,h}` (stateless Claude
 API chat) · `health_checks.cpp` (8 tests) · `deuce_timers.{cpp,h}` · `deuce_seg14.h` ·
 `deuce_ir_tools.{cpp,h}` · `deuce_vin.{cpp,h}` · `deuce_lock.{cpp,h}` ·
-`deuce_barcode.{cpp,h}` · `deuce_boot.h` · `pins_arduino.h`
+`deuce_barcode.{cpp,h}` · `deuce_ir_library.{cpp,h}` · `deuce_boot.h` · `pins_arduino.h`
 
 **Gated by `-DDEUCE_GRID_MENU`** in shared files: `main_menu.cpp` (grid hook), `ConfigMenu.cpp`
 (Claude AI + rain menu), `FileMenu.cpp` (Scripts), `OthersMenu.cpp` (Health Checks, VIN),
@@ -71,6 +74,5 @@ API chat) · `health_checks.cpp` (8 tests) · `deuce_timers.{cpp,h}` · `deuce_s
 
 ## Still pending (not built)
 
-- IR appliance library (SD code DB + browser)
-- Sentry-Safe (I²C)
+- Sentry-Safe
 - **LiDAR-emulator — parked** (not viable as described with an IR LED)
