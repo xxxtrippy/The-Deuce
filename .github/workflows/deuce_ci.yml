@@ -4,6 +4,12 @@ concurrency:
   group: deuce-ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Pages deploy of the web flasher needs these.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 # Compiles ONLY the Deuce_v1_1 env on GitHub's runners (which have the ESP32 toolchain),
 # so every push is verified to build before anything is flashed. Based on Bruce's own
 # manual_build_sel_env.yml recipe.
@@ -104,6 +110,42 @@ jobs:
           name: Deuce_v1_1-firmware
           path: |
             .pio/build/Deuce_v1_1/firmware.bin
+            .pio/build/Deuce_v1_1/bootloader.bin
+            .pio/build/Deuce_v1_1/partitions.bin
             .pio/build/Deuce_v1_1/firmware.elf
+            Bruce-Deuce_v1_1.bin
           if-no-files-found: warn
           retention-days: 3
+
+      # ---- Web flasher: assemble the Pages site (esp-web-tools) on main ----
+      - name: Assemble flasher site
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p _site
+          cp docs/index.html _site/index.html
+          cp docs/manifest.json _site/manifest.json
+          cp .pio/build/Deuce_v1_1/bootloader.bin _site/bootloader.bin
+          cp .pio/build/Deuce_v1_1/partitions.bin _site/partitions.bin
+          cp .pio/build/Deuce_v1_1/firmware.bin _site/firmware.bin
+          ver="${GITHUB_SHA::7}"
+          sed -i "s/{{VERSION}}/$ver/g" _site/manifest.json _site/index.html
+          echo "Flasher site assembled for build $ver"
+
+      - name: Upload Pages artifact
+        if: success() && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy-flasher:
+    name: Deploy web flasher (Pages)
+    if: github.ref == 'refs/heads/main'
+    needs: build-deuce
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

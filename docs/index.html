@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Deuce // Web Flasher</title>
+<style>
+  :root { --pri:#3de878; --bg:#0a0a0c; --sec:#1d6b3f; --panel:#111; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; }
+  body {
+    background:var(--bg); color:var(--pri);
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    display:flex; flex-direction:column; align-items:center;
+    padding:32px 16px; gap:22px;
+  }
+  #rain { position:fixed; inset:0; z-index:0; opacity:.14; }
+  .wrap { position:relative; z-index:1; width:100%; max-width:600px; }
+  h1 { letter-spacing:4px; font-size:30px; margin:0 0 2px; }
+  .sub { color:#8bbfa0; font-size:13px; letter-spacing:2px; margin-bottom:24px; }
+  .card {
+    border:1px solid var(--sec); border-radius:14px; background:rgba(0,0,0,.45);
+    padding:22px; margin-bottom:18px;
+  }
+  esp-web-install-button { --esp-tools-button-color:#000; --esp-tools-button-text-color:var(--pri); }
+  .flash-btn {
+    background:var(--pri); color:#000; border:0; border-radius:10px;
+    font:inherit; font-size:18px; font-weight:700; letter-spacing:2px;
+    padding:16px 30px; cursor:pointer; width:100%;
+  }
+  .flash-btn:hover { filter:brightness(1.08); }
+  ol { line-height:1.9; padding-left:20px; color:#cfe9da; }
+  code { background:#000; color:var(--pri); padding:2px 6px; border-radius:5px; }
+  .warn { color:#f3c969; font-size:13px; line-height:1.6; }
+  .muted { color:#7a9b89; font-size:12px; }
+  a { color:var(--pri); }
+  .ver { font-size:12px; color:#7a9b89; }
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div class="wrap">
+  <h1>THE&nbsp;DEUCE</h1>
+  <div class="sub">// WEB FLASHER &mdash; build {{VERSION}}</div>
+
+  <div class="card" style="text-align:center">
+    <esp-web-install-button manifest="./manifest.json">
+      <button class="flash-btn" slot="activate">&#9889; FLASH / UPDATE THE DEUCE</button>
+      <span slot="unsupported">Open this page in <b>Chrome</b> or <b>Edge</b> on a desktop &mdash; WebSerial isn't available in this browser.</span>
+      <span slot="not-allowed">This page must be served over <b>https</b> (or localhost) for flashing to work.</span>
+    </esp-web-install-button>
+    <div class="ver" style="margin-top:12px">Flashes bootloader + partitions + app by region &mdash; your SD data and saved settings are preserved.</div>
+  </div>
+
+  <div class="card">
+    <b>How to update</b>
+    <ol>
+      <li>Plug the Deuce into this computer with a <b>data</b> USB cable.</li>
+      <li>Click <b>Flash / Update</b> above.</li>
+      <li>Pick the Deuce's serial port in the browser prompt (hold <code>BOOT</code> if it won't connect).</li>
+      <li>Wait for "Flashing complete", then the Deuce reboots into the new build.</li>
+    </ol>
+    <div class="muted">Latest build is published automatically every time CI finishes on <code>main</code>.</div>
+  </div>
+
+  <div class="card warn">
+    &#9888; This writes firmware to your device. Only flash builds you trust. LittleFS (Claude API key, saved QRs) is kept; NVS-stored settings may reset. Chrome/Edge desktop only.
+  </div>
+</div>
+
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+<script>
+// matrix rain backdrop
+const cv=document.getElementById('rain'),cx=cv.getContext('2d');let cols,yp;
+function rs(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/14);yp=Array(cols).fill(0).map(()=>Math.random()*cv.height);}
+rs();addEventListener('resize',rs);
+setInterval(()=>{cx.fillStyle='rgba(10,10,12,.09)';cx.fillRect(0,0,cv.width,cv.height);cx.fillStyle='#2f8f58';cx.font='13px monospace';
+  for(let i=0;i<cols;i++){const ch=String.fromCharCode(0x30A0+Math.random()*96);cx.fillText(ch,i*14,yp[i]);yp[i]=yp[i]>cv.height&&Math.random()>.975?0:yp[i]+14;}},70);
+</script>
+</body>
+</html>
