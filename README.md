@@ -191,6 +191,7 @@ Current development targets:
 - [x] I²C main menu with RFID nested inside
 - [x] Max WiFi TX power (20 dBm) & BLE TX power (+9 dBm)
 - [x] QR Saved Codes tab
+- [x] TPMS reader — Toyota, Ford, Nissan, Schrader/GM (315 / 433.92 MHz)
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
 
