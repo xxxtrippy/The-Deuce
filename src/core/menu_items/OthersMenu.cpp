@@ -16,6 +16,7 @@
 void healthChecksMenu();
 void deuceVinDecoder(); // VIN decoder (boards/deuce_v11/deuce_vin.cpp)
 void deuceLockCalc();   // Lock combo calculator (boards/deuce_v11/deuce_lock.cpp)
+void deuceBarcodeMenu(); // 1D barcode generator (boards/deuce_v11/deuce_barcode.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -25,6 +26,7 @@ void OthersMenu::optionsMenu() {
         {"Health Checks", healthChecksMenu            },
         {"VIN Decoder",   deuceVinDecoder             },
         {"Lock Calc",     deuceLockCalc               },
+        {"Barcodes",      deuceBarcodeMenu            },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

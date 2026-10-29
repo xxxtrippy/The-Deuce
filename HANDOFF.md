@@ -16,7 +16,15 @@ Context for picking this build up in a fresh chat.
 
 ## Last 5 firmware edits/additions (newest first — all CI-green)
 
-1. **Lock combo calculator** (Others → Lock Calc) — `boards/deuce_v11/deuce_lock.{cpp,h}`, wired in
+1. **Barcodes** (Others → Barcodes) — `boards/deuce_v11/deuce_barcode.{cpp,h}`, wired in
+   `OthersMenu.cpp`. Offline 1D generator, **on-screen only** in this pass (SD PNG still pending).
+   Six symbologies: Code128 (auto B/C), UPC-A, EAN-13, Code93, Code39, Code11; check digits
+   auto-computed where applicable. Menu = Create / Save&Display / Saved Codes. Saved list lives on
+   **SD** at `/barcodes.txt` (`name|type|data` per line), add/remove, mirroring the QR menu. Encoders
+   host-verified bit-for-bit (EAN-13 vs the 5901234123457 reference, Code39 vs an independent width
+   table, Code128 table+mod-103 checksum vs known codewords, Code11 canonical USS widths, Code93
+   full 47-pattern table so C/K checks ≥43 index valid patterns).
+2. **Lock combo calculator** (Others → Lock Calc) — `boards/deuce_v11/deuce_lock.{cpp,h}`, wired in
    `OthersMenu.cpp`. Offline Master-style 40-position dial recovery: user enters the 3rd number
    (from the shackle-tension "sticking point" test); fixed modular relationship fixes 1st/2nd to
    40 candidates (plus ±1 third-number neighbor blocks for drift). Pure integer math, no network;
@@ -30,9 +38,6 @@ Context for picking this build up in a fresh chat.
 4. **Megalodon removed + QR restructured** — deleted `src/modules/others/tururururu.{cpp,h}` and
    its `OthersMenu` entry; `qrcode_menu.{cpp,h}` is now **Create** + **Saved Codes**; `config.h`
    `qrCodes = {}` (presets cleared).
-5. **Stopwatch + Countdown** (Clock submenu) — `boards/deuce_v11/deuce_timers.{cpp,h}` +
-   `deuce_seg14.h`; exposed `deuceSeg14At()` / `deuceSeg14Width()` from `interface.cpp`; wired in
-   `ClockMenu.cpp`. Big 14-seg `HH:MM:SS`, tap = start/stop, tap-bottom = reset, Back = exit.
 
 ## Pinout
 
@@ -53,8 +58,8 @@ Context for picking this build up in a fresh chat.
 `interface.cpp` (3-page 2×2 swipe grid UI, 14-seg font w/ corner breaks + even gap, matrix rain,
 header, boot anim, touch handler, `deuceSeg14At/Width`) · `claude_chat.{cpp,h}` (stateless Claude
 API chat) · `health_checks.cpp` (8 tests) · `deuce_timers.{cpp,h}` · `deuce_seg14.h` ·
-`deuce_ir_tools.{cpp,h}` · `deuce_vin.{cpp,h}` · `deuce_lock.{cpp,h}` · `deuce_boot.h` ·
-`pins_arduino.h`
+`deuce_ir_tools.{cpp,h}` · `deuce_vin.{cpp,h}` · `deuce_lock.{cpp,h}` ·
+`deuce_barcode.{cpp,h}` · `deuce_boot.h` · `pins_arduino.h`
 
 **Gated by `-DDEUCE_GRID_MENU`** in shared files: `main_menu.cpp` (grid hook), `ConfigMenu.cpp`
 (Claude AI + rain menu), `FileMenu.cpp` (Scripts), `OthersMenu.cpp` (Health Checks, VIN),
@@ -63,7 +68,8 @@ API chat) · `health_checks.cpp` (8 tests) · `deuce_timers.{cpp,h}` · `deuce_s
 
 ## Still pending (not built)
 
-- Barcodes (Code128 / UPC-A / EAN-13 / Code93 / Code39 / Code11 — screen + SD PNG)
+- Barcodes **SD PNG export** (on-screen generator done; PNG-to-SD is the remaining half —
+  will need a PNG encoder, e.g. PNGenc/`bitbank2`, writing the module grid at an integer scale)
 - IR appliance library (SD code DB + browser)
 - Sentry-Safe (I²C)
 - **LiDAR-emulator — parked** (not viable as described with an IR LED)
