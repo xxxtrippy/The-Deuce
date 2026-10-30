@@ -1,12 +1,20 @@
 #pragma once
-// THE DEUCE v1.1 -- antenna pattern plotter (live, measured).
+// THE DEUCE v1.1 -- unified multi-antenna pattern plotter.
 //
-// Tune the CC1101 to a frequency with a steady source present, then rotate the
-// unit through 360 degrees: the tool records received signal strength (RSSI) by
-// bearing and draws a polar plot of the antenna's real directivity -- the
-// measured twin of a modeled radiation pattern. Boresight (0 deg) is straight out
-// the RIGHT side of the unit in landscape; press to zero it to your grip. If the
-// MMC5983MA magnetometer is fitted it fills bearings automatically as you rotate;
-// otherwise it steps you through 12 x 30 deg captures. Shows peak dBm/bearing,
-// front/back ratio and HPBW. CC1101 required. In the RF menu.
+// Measures and overlays radiation patterns for all three antennas on the build:
+//   - CC1101  sub-GHz  (selectable: 315 / 433.92 / 868 / 915 MHz)
+//   - ESP32   2.4 GHz  (WiFi RSSI from fixed AP scan)
+//   - NRF24   2.4 GHz  (channel-0 RSSI / carrier detect)
+//
+// Each antenna can be enabled / disabled independently. You can run a single
+// antenna, any two, or all three back-to-back. Results are displayed as:
+//   - Live polar plot per antenna (updates while rotating)
+//   - Colour-coded overlay of all completed sweeps on one plot
+//   - Stats panel: peak dBm, bearing, F/B ratio, HPBW, estimated gain
+//
+// Bearing is auto-filled by the MMC5983MA magnetometer when fitted; otherwise
+// 12-step manual capture (every 30 deg).  Boresight (0 deg) = screen right.
+//
+// After all sweeps finish a summary screen shows all three patterns overlaid.
+// In the RF menu.
 void deuceAntennaPlot();
