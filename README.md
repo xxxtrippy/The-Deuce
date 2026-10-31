@@ -149,15 +149,6 @@ The WebUI provides a second control surface, without requiring interaction throu
 ### GPS (NEO-6M)
 - GPS Tracker, Wardriving (WiFi / BLE / both)
 
-### LoRa
-- Chat, change frequency / username
-
-### FM
-- Broadcast (standard / reserved / stop), FM Spectrum, Hijack TA
-
-### Ethernet (LAN8720 bridge builds)
-- Scan hosts, MAC flooding, DHCP starvation
-
 ### Others (utilities)
 - Barcodes — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD
 - QR Codes — generator + saved-codes tab

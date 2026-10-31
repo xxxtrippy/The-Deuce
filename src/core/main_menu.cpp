@@ -22,16 +22,7 @@ MainMenu::MainMenu() {
         &bleMenu,
         &rfMenu,
         &nrf24Menu,
-#if !defined(LITE_VERSION)
-        &loraMenu,
-#endif
-#if defined(FM_SI4713) && !defined(LITE_VERSION)
-        &fmMenu,
-#endif
         &irMenu,
-#if !defined(LITE_VERSION)
-        &ethernetMenu,
-#endif
         &gpsMenu,
         &i2cMenu, // THE DEUCE v1.1: I2C menu replaces RFID at top level; RFID now lives inside it
         &fileMenu,

@@ -138,29 +138,6 @@ GPS  (NEO-6M)
 
 
 --------------------------------------------------------------------------------
-LoRa
---------------------------------------------------------------------------------
-- Chat: long-range text chat with other LoRa nodes. Set your username and
-  frequency to match the group you're talking to.
-
-
---------------------------------------------------------------------------------
-FM
---------------------------------------------------------------------------------
-- Broadcast (standard / reserved / stop): transmit FM audio on a set frequency.
-- FM Spectrum: scan the FM band.
-- Hijack TA: traffic-announcement tricks.
-Transmitting FM is restricted -- know your local rules.
-
-
---------------------------------------------------------------------------------
-ETHERNET  (LAN8720 bridge builds)
---------------------------------------------------------------------------------
-- Scan Hosts / MAC Flooding / DHCP Starvation: wired-LAN tests for builds with
-  the LAN8720 fitted. Authorized networks only.
-
-
---------------------------------------------------------------------------------
 OTHERS
 --------------------------------------------------------------------------------
 - Health Checks: eight read-only network-safety modules -- WiFi Hygiene,
@@ -244,8 +221,8 @@ compressed data to flash". There is no OTA on the 4 MB single-slot layout.
 --------------------------------------------------------------------------------
 SAFETY & LEGAL
 --------------------------------------------------------------------------------
-Transmit and attack tools (RF Jammer, NRF Jammer, FM broadcast, WiFi / BLE
-attacks, Ethernet floods, MouseJack, Evil Portal) are for devices and networks
+Transmit and attack tools (RF Jammer, NRF Jammer, WiFi / BLE
+attacks, MouseJack, Evil Portal) are for devices and networks
 you own or have explicit written permission to test. Jamming and unlicensed
 transmission are illegal in most jurisdictions. Use the device responsibly.
 ================================================================================
