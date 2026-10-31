@@ -32,6 +32,19 @@ static SPISettings TOUCH_SPI(2000000, MSBFIRST, SPI_MODE0);
 static float calA = 0, calB = 0, calC = 0, calD = 0, calE = 0, calF = 0;
 static bool  calLoaded = false;
 
+// Baked-in fallback touch calibration for ROTATION 1. Used when LittleFS has no
+// saved cal -- e.g. after an erasing flash that wipes stored data. With real
+// values here, a wiped flash boots straight into working, correctly-oriented
+// touch with NO calibration screen. All-zero = disabled (fall back to on-screen
+// calibration). Fill these from the 6 numbers printed after a calibration
+// (Serial line "TOUCHCAL ..." or the on-screen values).
+#define DEFAULT_CAL_A 0.0f
+#define DEFAULT_CAL_B 0.0f
+#define DEFAULT_CAL_C 0.0f
+#define DEFAULT_CAL_D 0.0f
+#define DEFAULT_CAL_E 0.0f
+#define DEFAULT_CAL_F 0.0f
+
 // Title shown centered in the main-menu header.
 #define DEUCE_TITLE "The Deuce"
 
@@ -93,12 +106,20 @@ static bool xptRawSample(uint16_t &rx, uint16_t &ry) {
 
 static void loadCal() {
     File f = LittleFS.open("/touchcal6", "r");   // v6: 3-point affine calibration
-    if (!f) return;
-    float v[6];
-    for (int i = 0; i < 6; i++) v[i] = f.readStringUntil('\n').toFloat();
-    f.close();
-    if (v[0] != 0 || v[1] != 0) {   // sanity: X transform isn't all-zero
-        calA = v[0]; calB = v[1]; calC = v[2]; calD = v[3]; calE = v[4]; calF = v[5];
+    if (f) {
+        float v[6];
+        for (int i = 0; i < 6; i++) v[i] = f.readStringUntil('\n').toFloat();
+        f.close();
+        if (v[0] != 0 || v[1] != 0) {   // sanity: X transform isn't all-zero
+            calA = v[0]; calB = v[1]; calC = v[2]; calD = v[3]; calE = v[4]; calF = v[5];
+            calLoaded = true;
+            return;
+        }
+    }
+    // No saved cal (wiped LittleFS): use the baked-in default if one is set.
+    if (DEFAULT_CAL_A != 0.0f || DEFAULT_CAL_D != 0.0f) {
+        calA = DEFAULT_CAL_A; calB = DEFAULT_CAL_B; calC = DEFAULT_CAL_C;
+        calD = DEFAULT_CAL_D; calE = DEFAULT_CAL_E; calF = DEFAULT_CAL_F;
         calLoaded = true;
     }
 }
@@ -144,12 +165,32 @@ void calibrateTouchNow() {
     // solve the affine map raw(x,y) -> screen x and -> screen y
     bool ok1 = solveAffine(r1x, r1y, r2x, r2y, r3x, r3y, X1, X2, X3, calA, calB, calC);
     bool ok2 = solveAffine(r1x, r1y, r2x, r2y, r3x, r3y, Y1, Y2, Y3, calD, calE, calF);
-    if (ok1 && ok2) { saveCal(); calLoaded = true; }
+    if (ok1 && ok2) {
+        saveCal();
+        calLoaded = true;
+        // Print full precision so it can be baked in as DEFAULT_CAL_* (survives
+        // an erasing flash). Grab from a serial monitor, or read the screen.
+        Serial.printf("TOUCHCAL %.6f %.6f %.6f %.6f %.6f %.6f\n",
+                      calA, calB, calC, calD, calE, calF);
+    }
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_GREEN, TFT_BLACK);
+    tft.setTextSize(1);
     tft.drawCentreString(ok1 && ok2 ? "Touch calibrated!" : "Cal failed - retry",
-                         fw / 2, fh / 2 - 4, 1);
-    delay(1000);
+                         fw / 2, fh / 2 - 26, 1);
+    if (ok1 && ok2) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        char l1[48], l2[48];
+        snprintf(l1, sizeof(l1), "A%.5f B%.5f C%.1f", calA, calB, calC);
+        snprintf(l2, sizeof(l2), "D%.5f E%.5f F%.1f", calD, calE, calF);
+        tft.drawCentreString(l1, fw / 2, fh / 2 - 8, 1);
+        tft.drawCentreString(l2, fw / 2, fh / 2 + 4, 1);
+        tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        tft.drawCentreString("send these to bake as default", fw / 2, fh / 2 + 20, 1);
+        delay(7000);
+    } else {
+        delay(1000);
+    }
 }
 
 extern SPIClass sdcardSPI;   // Bruce's shared SD/radio SPI bus (defined in main.cpp)
