@@ -92,7 +92,7 @@ static bool xptRawSample(uint16_t &rx, uint16_t &ry) {
 }
 
 static void loadCal() {
-    File f = LittleFS.open("/touchcal6", "r");   // v6: 3-point affine calibration
+    File f = LittleFS.open("/touchcal7", "r");   // v7: 3-point (rotation flipped, forces one recal) affine calibration
     if (!f) return;
     float v[6];
     for (int i = 0; i < 6; i++) v[i] = f.readStringUntil('\n').toFloat();
@@ -104,7 +104,7 @@ static void loadCal() {
 }
 
 static void saveCal() {
-    File f = LittleFS.open("/touchcal6", "w");   // v6: 3-point affine calibration
+    File f = LittleFS.open("/touchcal7", "w");   // v7: 3-point (rotation flipped, forces one recal) affine calibration
     if (f) {
         f.printf("%.6f\n%.6f\n%.6f\n%.6f\n%.6f\n%.6f\n", calA, calB, calC, calD, calE, calF);
         f.close();
