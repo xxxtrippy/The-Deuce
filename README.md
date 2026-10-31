@@ -141,13 +141,13 @@ The WebUI provides a second control surface, without requiring interaction throu
 - IR Library — SD-backed appliance code database + browser
 - Intervalometer
 
-### NFC / RFID `I²C → RFID` (PN532)
+### NFC / RFID (PN532)
 - Scan / Read tag, Read 125 kHz, Read EMV
 - Write / Emulate NDEF, Chameleon, Amiibolink, SRIX tool, Add MIF key
 - iButton
 
 ### GPS (NEO-6M)
-- GPS Tracker, Wardriving (WiFi / BLE / both), Scan WiFi / BLE
+- GPS Tracker, Wardriving (WiFi / BLE / both)
 
 ### LoRa
 - Chat, change frequency / username
@@ -333,5 +333,5 @@ Use the device responsibly, and only against systems you **own** or have explici
 </p>
 
 <p align="center">
-  <sub>Built on the open-source <a href="https://github.com/pr3y/Bruce">Bruce</a> firmware. Independently customized for The Deuce.</sub>
+  <sub>Built on the open-source <a href="https://github.com/pr3y/Bruce">Bruce</a> firmware. Independently customized for The Deuce. Claude vibes.</sub>
 </p>
