@@ -186,21 +186,28 @@ static bool fetchMoney() {
         g_t[i].fixedWindow = false;
         g_t[i].nspark = 0;
     }
-    // 1) latest values + date
+    for (int i = 0; i < 8; i++) g_t[i].value = "n/a";
+
+    // 1) latest values -- v2 /v2/rates returns a FLAT ARRAY of {base,date,quote,rate}
     JsonDocument d1;
     if (!httpGetJson("https://api.frankfurter.dev/v2/rates?base=USD&quotes=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR",
                      d1, nullptr))
         return false;
-    JsonObject rates = d1["rates"].as<JsonObject>();
-    for (int i = 0; i < 8; i++) {
-        if (!rates[MONEY[i]].isNull()) {
-            g_t[i].cur = rates[MONEY[i]] | 0.0;
-            g_t[i].value = fmtRate(g_t[i].cur);
-            g_t[i].valid = true;
-        } else g_t[i].value = "n/a";
+    String date = "";
+    for (JsonObject row : d1.as<JsonArray>()) {
+        String q = String((const char *)(row["quote"] | ""));
+        q.toUpperCase();
+        if (date.length() == 0) date = String((const char *)(row["date"] | ""));
+        for (int i = 0; i < 8; i++) {
+            if (q == MONEY[i]) {
+                g_t[i].cur = row["rate"] | 0.0;
+                g_t[i].value = fmtRate(g_t[i].cur);
+                g_t[i].valid = true;
+            }
+        }
     }
-    // 2) ~2-week daily series for the sparkline
-    String date = String((const char *)(d1["date"] | ""));
+
+    // 2) ~2-week daily series for the sparkline (best-effort; never fails the values)
     if (date.length() == 10) {
         int y = date.substring(0, 4).toInt();
         int m = date.substring(5, 7).toInt();
@@ -214,12 +221,23 @@ static bool fetchMoney() {
                      "&to=" + date + "&base=USD&quotes=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR";
         JsonDocument d2;
         if (httpGetJson(url, d2, nullptr)) {
-            JsonObject days = d2["rates"].as<JsonObject>();
-            for (JsonPair kv : days) {
-                JsonObject day = kv.value().as<JsonObject>();
-                for (int i = 0; i < 8; i++) {
-                    if (!day[MONEY[i]].isNull() && g_t[i].nspark < MKT_SPK)
-                        g_t[i].spark[g_t[i].nspark++] = (float)(day[MONEY[i]] | 0.0);
+            if (d2.is<JsonArray>()) {
+                // flat rows: {date,quote,rate}, in date order per quote
+                for (JsonObject row : d2.as<JsonArray>()) {
+                    String q = String((const char *)(row["quote"] | ""));
+                    q.toUpperCase();
+                    for (int i = 0; i < 8; i++)
+                        if (q == MONEY[i] && g_t[i].nspark < MKT_SPK)
+                            g_t[i].spark[g_t[i].nspark++] = (float)(row["rate"] | 0.0);
+                }
+            } else {
+                // classic shape: rates keyed by date -> {quote:rate}
+                JsonObject days = d2["rates"].as<JsonObject>();
+                for (JsonPair kv : days) {
+                    JsonObject day = kv.value().as<JsonObject>();
+                    for (int i = 0; i < 8; i++)
+                        if (!day[MONEY[i]].isNull() && g_t[i].nspark < MKT_SPK)
+                            g_t[i].spark[g_t[i].nspark++] = (float)(day[MONEY[i]] | 0.0);
                 }
             }
             // trend % over the shown window
