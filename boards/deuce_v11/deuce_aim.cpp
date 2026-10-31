@@ -32,6 +32,7 @@ static float g_val[AIM_N];     // current: dBm for CC/WiFi, 0..100 (%) for NRF
 static float g_peak[AIM_N];    // peak-hold
 static bool  g_isPct[AIM_N] = { false, false, true };
 static float g_ccFreq = 433.92f;
+static bool  g_nrfOk = false;  // NRF present + initialised this session
 
 // ── Readers ───────────────────────────────────────────────────────────────────
 static int aimReadCC1101(int n = 6) {
@@ -53,17 +54,15 @@ static float aimReadNRF(int n = 16) {
 static void aimDrawStatic(bool mag) {
     int W = tft.width(), H = tft.height();
     uint16_t pri = bruceConfig.priColor, bg = bruceConfig.bgColor, sec = bruceConfig.secColor;
+    (void)mag;
     tft.fillScreen(bg);
     tft.setTextSize(1);
-    // small centred title
     const char* t = "LIVE AIM";
     tft.setTextColor(pri, bg);
     tft.drawString(t, (W - tft.textWidth(t)) / 2, 4);
     tft.drawFastHLine(0, 16, W, sec);
     tft.setTextColor(sec, bg);
-    const char* f = mag ? "[SEL] reset peak   [ESC] exit"
-                        : "[SEL] reset peak   [ESC] exit";
-    tft.drawString(f, 4, H - 11);
+    tft.drawString("[SEL] reset peak   [ESC] exit", 4, H - 11);
 }
 
 static int aimBarY(int i, int H) { return 26 + i * ((H - 40) / AIM_N); }
@@ -74,35 +73,37 @@ static void aimDrawBand(int i) {
     int y = aimBarY(i, H);
     int bx = 10, bw = W - 20, bh = 18;
     int by = y + 13;
+    bool na = (i == AIM_NRF && !g_nrfOk);
 
-    // clear row region
     tft.fillRect(0, y, W, (H - 40) / AIM_N - 2, bg);
 
-    // label + value
     tft.setTextColor(col, bg);
     tft.drawString(AIM_NAMES[i], bx, y);
     char v[20];
-    if (g_isPct[i]) snprintf(v, sizeof(v), "%d%% CD", (int)g_val[i]);
-    else            snprintf(v, sizeof(v), "%d dBm", (int)g_val[i]);
+    if (na)              snprintf(v, sizeof(v), "n/a");
+    else if (g_isPct[i]) snprintf(v, sizeof(v), "%d%% CD", (int)g_val[i]);
+    else                 snprintf(v, sizeof(v), "%d dBm", (int)g_val[i]);
     tft.drawString(v, W - 10 - tft.textWidth(v), y);
 
-    // bar frame
     tft.drawRect(bx, by, bw, bh, sec);
 
-    // fill fraction
     float frac;
-    if (g_isPct[i]) frac = g_val[i] / 100.0f;
-    else            frac = (g_val[i] - AIM_DBM_MIN) / (AIM_DBM_MAX - AIM_DBM_MIN);
-    if (frac < 0) frac = 0; if (frac > 1) frac = 1;
+    if (na)              frac = 0;
+    else if (g_isPct[i]) frac = g_val[i] / 100.0f;
+    else                 frac = (g_val[i] - AIM_DBM_MIN) / (AIM_DBM_MAX - AIM_DBM_MIN);
+    if (frac < 0) frac = 0;
+    if (frac > 1) frac = 1;
     int fw = (int)(frac * (bw - 2));
     tft.fillRect(bx + 1, by + 1, bw - 2, bh - 2, bg);
     if (fw > 0) tft.fillRect(bx + 1, by + 1, fw, bh - 2, col);
+    if (na) return;
 
     // peak-hold tick
     float pf;
     if (g_isPct[i]) pf = g_peak[i] / 100.0f;
     else            pf = (g_peak[i] - AIM_DBM_MIN) / (AIM_DBM_MAX - AIM_DBM_MIN);
-    if (pf < 0) pf = 0; if (pf > 1) pf = 1;
+    if (pf < 0) pf = 0;
+    if (pf > 1) pf = 1;
     int px = bx + 1 + (int)(pf * (bw - 2));
     tft.drawFastVLine(px, by - 2, bh + 4, TFT_WHITE);
 }
@@ -137,6 +138,7 @@ void deuceAimScreen() {
 
     aimPickFreq();
 
+    g_nrfOk = false;
     for (int i = 0; i < AIM_N; i++) { g_val[i] = g_isPct[i] ? 0 : AIM_DBM_MIN; g_peak[i] = g_val[i]; }
 
     bool mag = mmcBegin();
@@ -153,8 +155,11 @@ void deuceAimScreen() {
     WiFi.scanNetworks(true, true, false, 120);   // async
 #endif
 #ifdef HAVE_NRF24
-    radio.setChannel(76);     // 2.476 GHz
-    radio.startListening();
+    // Only touch the NRF if it actually answers -- operating an un-begun module
+    // on the shared SPI bus is what rebooted the device.
+    g_nrfOk = radio.begin();
+    if (g_nrfOk) g_nrfOk = radio.isChipConnected();
+    if (g_nrfOk) { radio.setChannel(76); radio.startListening(); }
 #endif
 
     aimDrawStatic(mag);
@@ -171,8 +176,10 @@ void deuceAimScreen() {
         if (g_val[AIM_CC] > g_peak[AIM_CC]) g_peak[AIM_CC] = g_val[AIM_CC];
 
 #ifdef HAVE_NRF24
-        g_val[AIM_NRF] = aimReadNRF();
-        if (g_val[AIM_NRF] > g_peak[AIM_NRF]) g_peak[AIM_NRF] = g_val[AIM_NRF];
+        if (g_nrfOk) {
+            g_val[AIM_NRF] = aimReadNRF();
+            if (g_val[AIM_NRF] > g_peak[AIM_NRF]) g_peak[AIM_NRF] = g_val[AIM_NRF];
+        }
 #endif
 
 #ifdef HAVE_WIFI_RSSI

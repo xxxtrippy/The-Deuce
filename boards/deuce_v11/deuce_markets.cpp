@@ -28,7 +28,7 @@ struct Tile {
     bool valid;
 };
 
-static Tile g_t[8];
+static Tile g_t[12];
 static int g_n = 0;
 
 // ---------------------------------------------------------------------------
@@ -133,7 +133,7 @@ static bool isStable(const String &s) {
 static bool fetchCrypto() {
     g_n = 0;
     String url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
-                 "&order=market_cap_desc&per_page=10&page=1&sparkline=true"
+                 "&order=market_cap_desc&per_page=6&page=1&sparkline=true"
                  "&price_change_percentage=24h";
     JsonDocument filter;
     JsonObject el = filter.add<JsonObject>();
@@ -179,14 +179,22 @@ static bool fetchCrypto() {
 static const char *MONEY[8] = {"GBP", "EUR", "CAD", "CNY", "JPY", "AUD", "MXN", "INR"};
 
 static bool fetchMoney() {
-    g_n = 8;
+    g_n = 9;  // USD anchor + 8 quotes
+    // tile 0 = USD base (always 1.0000)
+    g_t[0] = Tile();
+    g_t[0].label = "USD";
+    g_t[0].value = "1.0000";
+    g_t[0].cur = 1.0;
+    g_t[0].valid = true;
+    g_t[0].fixedWindow = false;
+    g_t[0].nspark = 0;
     for (int i = 0; i < 8; i++) {
-        g_t[i] = Tile();
-        g_t[i].label = MONEY[i];
-        g_t[i].fixedWindow = false;
-        g_t[i].nspark = 0;
+        g_t[i + 1] = Tile();
+        g_t[i + 1].label = MONEY[i];
+        g_t[i + 1].fixedWindow = false;
+        g_t[i + 1].nspark = 0;
+        g_t[i + 1].value = "n/a";
     }
-    for (int i = 0; i < 8; i++) g_t[i].value = "n/a";
 
     // 1) latest values -- v2 /v2/rates returns a FLAT ARRAY of {base,date,quote,rate}
     JsonDocument d1;
@@ -200,11 +208,18 @@ static bool fetchMoney() {
         if (date.length() == 0) date = String((const char *)(row["date"] | ""));
         for (int i = 0; i < 8; i++) {
             if (q == MONEY[i]) {
-                g_t[i].cur = row["rate"] | 0.0;
-                g_t[i].value = fmtRate(g_t[i].cur);
-                g_t[i].valid = true;
+                g_t[i + 1].cur = row["rate"] | 0.0;
+                g_t[i + 1].value = fmtRate(g_t[i + 1].cur);
+                g_t[i + 1].valid = true;
             }
         }
+    }
+
+    // if the bulk response didn't carry a date, probe a tiny single-pair call (always dated)
+    if (date.length() != 10) {
+        JsonDocument dp;
+        if (httpGetJson("https://api.frankfurter.dev/v2/rate/usd/eur", dp, nullptr))
+            date = String((const char *)(dp["date"] | ""));
     }
 
     // 2) ~2-week daily series for the sparkline (best-effort; never fails the values)
@@ -227,8 +242,8 @@ static bool fetchMoney() {
                     String q = String((const char *)(row["quote"] | ""));
                     q.toUpperCase();
                     for (int i = 0; i < 8; i++)
-                        if (q == MONEY[i] && g_t[i].nspark < MKT_SPK)
-                            g_t[i].spark[g_t[i].nspark++] = (float)(row["rate"] | 0.0);
+                        if (q == MONEY[i] && g_t[i + 1].nspark < MKT_SPK)
+                            g_t[i + 1].spark[g_t[i + 1].nspark++] = (float)(row["rate"] | 0.0);
                 }
             } else {
                 // classic shape: rates keyed by date -> {quote:rate}
@@ -236,12 +251,12 @@ static bool fetchMoney() {
                 for (JsonPair kv : days) {
                     JsonObject day = kv.value().as<JsonObject>();
                     for (int i = 0; i < 8; i++)
-                        if (!day[MONEY[i]].isNull() && g_t[i].nspark < MKT_SPK)
-                            g_t[i].spark[g_t[i].nspark++] = (float)(day[MONEY[i]] | 0.0);
+                        if (!day[MONEY[i]].isNull() && g_t[i + 1].nspark < MKT_SPK)
+                            g_t[i + 1].spark[g_t[i + 1].nspark++] = (float)(day[MONEY[i]] | 0.0);
                 }
             }
             // trend % over the shown window
-            for (int i = 0; i < 8; i++) {
+            for (int i = 1; i <= 8; i++) {
                 if (g_t[i].nspark >= 2 && g_t[i].spark[0] != 0) {
                     g_t[i].chg =
                         (g_t[i].spark[g_t[i].nspark - 1] - g_t[i].spark[0]) / g_t[i].spark[0] * 100.0;
@@ -352,6 +367,14 @@ static void drawPage(const String &title, const String &status, int page, int pa
     (void)title; (void)status; (void)pages; // header intentionally removed -- grid only
     uint16_t bg = bruceConfig.bgColor;
     tft.fillScreen(bg);
+    if (g_n == 0) {   // no data -- show a prompt instead of a blank screen
+        uint16_t sec = bruceConfig.secColor;
+        tft.setTextSize(1);
+        tft.setTextColor(sec, bg);
+        const char *m = "no data -- SEL to retry";
+        tft.drawString(m, (tft.width() - tft.textWidth(m)) / 2, tft.height() / 2 - 4);
+        return;
+    }
     for (int s = 0; s < 4; s++) {
         int idx = page * 4 + s;
         if (idx >= g_n) continue;
