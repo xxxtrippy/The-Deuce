@@ -1,0 +1,251 @@
+================================================================================
+THE DEUCE -- FULL WALKTHROUGH
+ESP32-WROOM-32U handheld on customized Bruce firmware
+================================================================================
+
+This guide walks every module front to back: what it is, what it does on this
+build, and what each selection/option does. The same text is viewable on the
+device under Others -> How To.
+
+Custom "Deuce" field tools are documented in full. Inherited Bruce menus are
+summarized; those tools follow standard Bruce behavior.
+
+Scroll the on-device version with UP / DOWN (page at a time). Leave any screen
+with the ESC / GPIO36 Back button.
+
+
+--------------------------------------------------------------------------------
+NAVIGATION & HEADER
+--------------------------------------------------------------------------------
+The main screen is a 2x2 touch grid across 3 pages. Tap a tile to open it;
+swipe left/right to change page. The GPIO36 hardware Back button leaves any
+screen (debounced, so you never get stuck).
+
+The top header shows: clock, battery %, and status icons for WiFi, SD, BLE,
+GPS and WebUI. A lightning-bolt icon appears when the GPIO2 flash switch is on.
+
+
+--------------------------------------------------------------------------------
+WIFI
+--------------------------------------------------------------------------------
+- Scan Hosts: list devices on the joined network (IP / MAC / vendor).
+- Sniffer: capture raw 2.4 GHz WiFi frames; can save to SD.
+- Channel Analyzer: live per-channel activity graph to find clear channels.
+- Wifi Atks: deauth, beacon spam and other frame attacks against a chosen AP.
+  Authorized targets only.
+- Evil Portal / Evil Wifi: host a captive-portal AP that serves a login page
+  and logs what is entered. Research / awareness use only.
+- Brucegotchi: passive handshake / pwn collector (Pwnagotchi-style).
+- NetCut: ARP-based cut of a host on your LAN.
+- Responder / ReverseShell / SSH / TelNET / SOCKS4 Proxy / TCP client+listen /
+  Wireguard: network client and relay tools for authorized testing.
+- Start WiFi AP: bring up an access point from the Deuce.
+- Connect to Wifi: join a network. Required by Claude AI, the Crypto/Money
+  trackers, WiFi Radio and the Health Checks.
+- Change MAC: spoof the WiFi MAC address.
+- WiFi Pass Recovery: read back saved network credentials.
+- WiFi Radio: SD-backed synced internet-radio station with a browser player
+  (up to ~8 listeners).
+
+
+--------------------------------------------------------------------------------
+BLUETOOTH (BLE)
+--------------------------------------------------------------------------------
+- BLE Scan: list nearby BLE devices (name / address / RSSI).
+- BLE Sniffer: capture advertising traffic.
+- BLE Spam / Bad BLE: flood advertising packets (pairing popups, etc.).
+- BLE Keyboard / Media Cmds / Presenter mode: act as a BLE HID keyboard or
+  remote to control a paired computer or slide deck.
+- iBeacon: broadcast an iBeacon.
+- Ninebot: scooter-specific BLE commands.
+
+
+--------------------------------------------------------------------------------
+RF / SUB-GHz  (CC1101)
+--------------------------------------------------------------------------------
+Requires the CC1101 module (shown in the RF menu title). Set the frequency in
+RF -> Config if auto-scan misses your device.
+
+- Scan/copy: find and capture a sub-GHz signal (315 / 433 / 868 / 915 MHz),
+  then replay it.
+- Record RAW: capture raw timings to SD for later replay / analysis.
+- Custom SubGhz: transmit a hand-entered protocol / code.
+- Spectrum / RSSI Spectrum: live signal strength across the band to spot
+  active frequencies.
+- SquareWave Spec / Spectogram: waveform and waterfall views.
+- Listen: demodulate and inspect / play a signal.
+- Bruteforce: step through codes for simple fixed-code devices. Authorized.
+- Jammer: transmit noise on a frequency. Illegal in most places -- bench only.
+
+Deuce custom RF tools:
+- TPMS: decode tire-pressure sensors (Toyota / Ford / Nissan / Schrader-GM) on
+  315 or 433.92 MHz. Shows sensor ID, pressure and temperature.
+- Faraday Test: measure how much a bag / box / room attenuates CC1101 signal.
+  Take an open-air reading, then a shielded reading; it reports the dB drop
+  and a pass/fail verdict for shielding effectiveness.
+- Antenna Plot: measure a real radiation pattern. Pick the CC1101 band, toggle
+  which antennas to sweep (CC1101 / WiFi / NRF24), then rotate the unit. It
+  plots RSSI vs bearing as a colour-coded polar graph and reports peak dBm,
+  front/back ratio, half-power beamwidth and estimated gain. With the MMC5983
+  magnetometer it reads bearing automatically; otherwise you capture in 12
+  steps of 30 degrees. Multiple antennas overlay on one plot.
+- Live Aim: real-time signal bars for aiming antennas by measured signal. Pick
+  the CC1101 band; you get a live bar for CC1101 (true dBm), WiFi (loudest AP
+  dBm) and NRF24 (carrier-detect %, shown "n/a" when the NRF isn't active).
+  Each bar carries a white peak-hold tick; SEL resets the peaks; heading shows
+  top-right when the magnetometer is fitted. Bend a whip toward your target
+  and watch that band's bar climb -- stop at the peak.
+
+
+--------------------------------------------------------------------------------
+NRF24  (2.4 GHz)
+--------------------------------------------------------------------------------
+- Information: read the NRF24 module registers / status.
+- Spectrum: 2.4 GHz channel-activity scan.
+- NRF Jammer: transmit noise across 2.4 GHz. Bench only.
+- MouseJack: test vulnerable wireless mice / keyboards. Authorized only.
+
+
+--------------------------------------------------------------------------------
+INFRARED (IR)
+--------------------------------------------------------------------------------
+- IR Read: capture a remote's code via the IR receiver.
+- Custom IR: send a specific code you enter.
+- IR Library: browse the SD-backed appliance database and send codes.
+- TV-B-Gone: blast common TV power-off codes.
+- IR Jammer: flood IR to block other remotes.
+- Intervalometer: trigger a camera's IR shutter on a timed interval for
+  time-lapse photography.
+
+
+--------------------------------------------------------------------------------
+NFC / RFID  (PN532, under I2C -> RFID)
+--------------------------------------------------------------------------------
+- Scan / Read tag: identify and dump a 13.56 MHz tag.
+- Read 125kHz: low-frequency tags.
+- Read EMV: read a contactless card's public data.
+- Write NDEF / Emulate NDEF: write records or emulate a tag.
+- Chameleon / Amiibolink / SRIX Tool / Add MIF Key: specialist tag tools.
+- iButton (under Others): read / emulate 1-Wire iButton keys.
+
+
+--------------------------------------------------------------------------------
+GPS  (NEO-6M)
+--------------------------------------------------------------------------------
+- GPS Tracker: live position / speed / altitude and logging.
+- Wardriving: log WiFi and/or BLE devices tagged with GPS coordinates to SD
+  (Scan WiFi / Scan BLE / Scan Both).
+
+
+--------------------------------------------------------------------------------
+LoRa
+--------------------------------------------------------------------------------
+- Chat: long-range text chat with other LoRa nodes. Set your username and
+  frequency to match the group you're talking to.
+
+
+--------------------------------------------------------------------------------
+FM
+--------------------------------------------------------------------------------
+- Broadcast (standard / reserved / stop): transmit FM audio on a set frequency.
+- FM Spectrum: scan the FM band.
+- Hijack TA: traffic-announcement tricks.
+Transmitting FM is restricted -- know your local rules.
+
+
+--------------------------------------------------------------------------------
+ETHERNET  (LAN8720 bridge builds)
+--------------------------------------------------------------------------------
+- Scan Hosts / MAC Flooding / DHCP Starvation: wired-LAN tests for builds with
+  the LAN8720 fitted. Authorized networks only.
+
+
+--------------------------------------------------------------------------------
+OTHERS
+--------------------------------------------------------------------------------
+- Health Checks: eight read-only network-safety modules -- WiFi Hygiene,
+  Internet / Latency, Device Inventory, Service / Port Scan, Attack Watchdog,
+  Rogue DHCP, UPnP / mDNS Exposure, and a consolidated Health Report. Run them
+  against your own network to see what is exposed.
+- VIN Decoder: enter a 17-character VIN. Offline it decodes the WMI (maker /
+  region) and validates the check digit; online it pulls the full NHTSA record.
+- Lock Calc: enter the known / sticking digits of a combination padlock and it
+  lists the valid remaining combinations to try.
+- Barcodes: generate Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11. Enter the
+  data, see it rendered live, and export a PNG to SD.
+- QRCodes: generate a QR from text / URL; a Saved Codes tab stores favourites.
+- Ghost Radar: sweep RF field strength (with the magnetometer, a true EMF
+  channel). It self-calibrates to the room baseline, then flags spikes. A
+  field-strength tool, not a literal ghost detector.
+- Resistor Calc: pick the colour bands (4 / 5 / 6) and it shows resistance and
+  tolerance; it also detects when the bands were entered in reverse.
+- Crypto: live top-coin prices in a 2x2 grid, each tile showing price, 24h
+  change and a sparkline. Needs WiFi. Swipe for more coins; SEL refreshes; it
+  auto-updates every 60 seconds.
+- Money: live USD exchange rates. Tile 1 is USD (1.0000), then GBP / EUR / CAD
+  / CNY / JPY / AUD / MXN / INR, each with a ~2-week trend sparkline. Needs
+  WiFi. Swipe for more; SEL refreshes.
+- Key Copier: pick a key blank and enter the bitting depths; it draws the key
+  profile to help duplicate a key you own.
+- Microphone / Record: audio capture (on builds with a mic).
+- BadUSB / HID / USB Keyboard / USB Clicker / USB U2F: native-USB HID tools
+  (USB-capable builds only).
+- How To: this guide.
+
+
+--------------------------------------------------------------------------------
+CLOCK
+--------------------------------------------------------------------------------
+- Stopwatch, Countdown and Timer (99:99:99), backed by the DS3231 real-time
+  clock so the time survives a power-off.
+
+
+--------------------------------------------------------------------------------
+FILES / SCRIPTS
+--------------------------------------------------------------------------------
+Browse the SD card and LittleFS, run scripts, present as USB Mass Storage, and
+send / receive files and commands. WebUI launches the on-device web panel.
+
+
+--------------------------------------------------------------------------------
+CLAUDE AI
+--------------------------------------------------------------------------------
+On-device chat with Anthropic's Messages API over WiFi. Set your API key (on
+the device or in the WebUI at /claude), pick Haiku / Sonnet / Opus or a custom
+model ID, and an output-token limit. Requests are stateless to save memory on
+the ESP32; your key stays on the device and is never committed to the repo.
+
+
+--------------------------------------------------------------------------------
+WEBUI
+--------------------------------------------------------------------------------
+Browse to http://deuce.local or the device IP, log in, and configure branding,
+theme colours and Claude from a browser instead of the touchscreen.
+
+
+--------------------------------------------------------------------------------
+CONFIG / SETTINGS
+--------------------------------------------------------------------------------
+Set pins, the RF module and frequency, IR pins, screen brightness, theme
+colours, WiFi TX power, time and more. RF tools require the RF module to be set
+to CC1101 here.
+
+
+--------------------------------------------------------------------------------
+UPDATING
+--------------------------------------------------------------------------------
+Flash over USB with the web installer (Chrome / Edge on desktop) at
+https://xxxtrippy.github.io/The-Deuce/, or with `pio run -e Deuce_v1_1 -t
+upload`. Use a known-good USB DATA cable on a direct port, with the battery
+charged -- a weak cable or a brownout mid-write causes "failed to write
+compressed data to flash". There is no OTA on the 4 MB single-slot layout.
+
+
+--------------------------------------------------------------------------------
+SAFETY & LEGAL
+--------------------------------------------------------------------------------
+Transmit and attack tools (RF Jammer, NRF Jammer, FM broadcast, WiFi / BLE
+attacks, Ethernet floods, MouseJack, Evil Portal) are for devices and networks
+you own or have explicit written permission to test. Jamming and unlicensed
+transmission are illegal in most jurisdictions. Use the device responsibly.
+================================================================================
