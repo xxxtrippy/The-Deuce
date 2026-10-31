@@ -188,7 +188,7 @@ static bool fetchMoney() {
     }
     // 1) latest values + date
     JsonDocument d1;
-    if (!httpGetJson("https://api.frankfurter.app/latest?from=USD&to=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR",
+    if (!httpGetJson("https://api.frankfurter.dev/v2/rates?base=USD&quotes=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR",
                      d1, nullptr))
         return false;
     JsonObject rates = d1["rates"].as<JsonObject>();
@@ -208,10 +208,10 @@ static bool fetchMoney() {
         long end = civilToDays(y, m, d);
         int sy, sm, sd;
         daysToCivil(end - 16, sy, sm, sd);
-        char range[48];
-        snprintf(range, sizeof(range), "%04d-%02d-%02d..%s", sy, sm, sd, date.c_str());
-        String url = "https://api.frankfurter.app/" + String(range) +
-                     "?from=USD&to=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR";
+        char startd[16];
+        snprintf(startd, sizeof(startd), "%04d-%02d-%02d", sy, sm, sd);
+        String url = "https://api.frankfurter.dev/v2/rates?from=" + String(startd) +
+                     "&to=" + date + "&base=USD&quotes=GBP,EUR,CAD,CNY,JPY,AUD,MXN,INR";
         JsonDocument d2;
         if (httpGetJson(url, d2, nullptr)) {
             JsonObject days = d2["rates"].as<JsonObject>();
