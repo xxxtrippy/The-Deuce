@@ -15,7 +15,7 @@
 
 ## `// SYST3M OVERV1EW`
 
-The Deuce is a custom built ESP32xRP2040 handheld, engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
+The Deuce is a custom built ESP32 x RP2040 handheld, engineered for wireless diagnostics, signal exploration, hardware interaction, and on-device intelligence.
 
 Fabricated around the ESP32-WROOM-32U and a 2.4-inch touchscreen, it integrates a collection of radio interfaces, peripheral controllers, and purpose built firmware into a compact field platform.
 
