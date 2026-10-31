@@ -110,6 +110,77 @@ The WebUI provides a second control surface, without requiring interaction throu
 
 ---
 
+## `// FE4TURE M4P`
+
+Every on-device tool, grouped by its menu section. **★ = Deuce custom field tool** (added on top of the Bruce base); everything else is inherited and retained.
+
+### Radio Frequency `RF`
+- Scan / copy, Record RAW, Custom SubGHz send
+- Spectrum, RSSI Spectrum, SquareWave Spectrum, Spectrogram (waterfall)
+- Listen, Bruteforce, Jammer
+- **TPMS reader ★** — Toyota / Ford / Nissan / Schrader-GM (315 / 433.92 MHz)
+- **Faraday Test ★** — RF-shielding attenuation + verdict
+- **Antenna Plot ★** — unified multi-antenna polar RSSI pattern (CC1101 / WiFi / NRF24, per-antenna toggle, colour-coded overlay, HPBW / F-B / est. gain)
+- **Live Aim ★** — real-time per-band signal bars with peak-hold + heading, for aiming whips by measured signal
+
+### WiFi
+- Scan hosts, Sniffer, Channel Analyzer
+- Wifi attacks — Evil Portal, Evil WiFi, deauth / jam detect, beacon spam
+- Brucegotchi, NetCut, Responder, Reverse Shell, SSH, TelNET, SOCKS4 proxy, TCP client / listen, Wireguard
+- Start AP, Connect, Change MAC, WiFi password recovery
+- **WiFi Radio ★** — SD-backed synced web radio station (browser player, ~8 listeners)
+
+### Bluetooth `BLE`
+- BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite
+- BLE Keyboard, Media Cmds, Presenter mode, iBeacon, Ninebot
+
+### 2.4 GHz `NRF24`
+- Information, Spectrum, NRF Jammer, MouseJack
+- Shared-SPI and legacy SPI module modes
+
+### Infrared `IR`
+- IR Read, Custom IR, TV-B-Gone, IR Jammer
+- **IR Library ★** — SD-backed appliance code database + browser
+- **Intervalometer ★**
+
+### NFC / RFID `I²C → RFID` (PN532)
+- Scan / Read tag, Read 125 kHz, Read EMV
+- Write / Emulate NDEF, Chameleon, Amiibolink, SRIX tool, Add MIF key
+- iButton
+
+### GPS (NEO-6M)
+- GPS Tracker, Wardriving (WiFi / BLE / both), Scan WiFi / BLE
+
+### LoRa
+- Chat, change frequency / username
+
+### FM
+- Broadcast (standard / reserved / stop), FM Spectrum, Hijack TA
+
+### Ethernet (LAN8720 bridge builds)
+- Scan hosts, MAC flooding, DHCP starvation
+
+### Others (utilities)
+- **Barcodes ★** — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD
+- **QR Codes ★** — generator + saved-codes tab
+- **Crypto tracker ★** — top coins, 2×2 grid, 24h sparklines
+- **Money tracker ★** — USD vs GBP / EUR / CAD / CNY / JPY / AUD / MXN / INR, trend sparklines
+- **Ghost Radar ★** — RF field-strength sweep + optional MMC5983MA magnetometer (true EMF), self-calibrating
+- **Resistor Calc ★** — 4 / 5 / 6 band with reversed-entry detection
+- **Key Copier ★** — mechanical key bitting visualizer
+- **Lock Calc ★** — lock combination calculator
+- **VIN Decoder ★** — offline WMI + online NHTSA lookup
+- Health Checks — eight network modules (see below)
+- BadUSB / HID, USB Keyboard, USB Clicker, USB U2F, Microphone, Record, Spectrum
+
+### Clock
+- **Stopwatch ★**, **Countdown ★**, **Timer ★** `99:99:99`, DS3231 RTC
+
+### Files / Scripts
+- SD card, LittleFS, USB Mass Storage, send / receive files & commands, script loader, WebUI launch
+
+---
+
 ## `// RAD1O & PERIPH3RAL STACK`
 
 | Subsystem | Hardware / Function |
@@ -195,13 +266,14 @@ Current development targets:
 - [x] TPMS reader — Toyota, Ford, Nissan, Schrader/GM (315 / 433.92 MHz)
 - [x] Ghost Radar — RF field-strength sweep + optional MMC5983MA magnetometer (true EMF), self-calibrating
 - [x] Faraday cage / RF-shielding tester (CC1101 RSSI attenuation + verdict)
-- [x] Antenna Plot — live measured polar RSSI-vs-bearing pattern (magnetometer or stepped)
+- [x] Antenna Plot — unified multi-antenna polar RSSI pattern (CC1101 / WiFi / NRF24, per-antenna toggle, colour-coded overlay, HPBW / F-B / est. gain)
 - [x] WiFi Radio — SD-backed synced web radio station (browser player, up to ~8 listeners)
 - [x] Resistor color-code calculator — 4/5/6 band with reversed-entry detection
 - [x] Crypto tracker — top coins, 2×2 swipe grid with 24h sparklines
 - [x] Money tracker — USD vs GBP/EUR/CAD/CNY/JPY/AUD/MXN/INR with trend sparklines
 - [x] Key Copier — mechanical key bitting visualizer
 - [x] Web USB flasher — browser WebSerial installer (esp-web-tools), auto-published by CI
+- [x] Live Aim — real-time per-band signal bars (CC1101 dBm / WiFi dBm / NRF24 carrier %) with peak-hold + heading, for aiming antennas by measured signal
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
 
