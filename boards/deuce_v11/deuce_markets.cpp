@@ -38,9 +38,11 @@ static bool httpGetJson(const String &url, JsonDocument &doc, JsonDocument *filt
     for (int attempt = 1; attempt <= 2; attempt++) {
         WiFiClientSecure client;
         client.setInsecure();
+        client.setHandshakeTimeout(10);
         HTTPClient https;
-        https.setConnectTimeout(15000);
-        https.setTimeout(30000);
+        https.setConnectTimeout(8000);
+        https.setTimeout(12000);
+        https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS); // APIs now 301 to new hosts
         if (!https.begin(client, url)) {
             delay(400);
             continue;
@@ -131,7 +133,7 @@ static bool isStable(const String &s) {
 static bool fetchCrypto() {
     g_n = 0;
     String url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
-                 "&order=market_cap_desc&per_page=12&page=1&sparkline=true"
+                 "&order=market_cap_desc&per_page=10&page=1&sparkline=true"
                  "&price_change_percentage=24h";
     JsonDocument filter;
     JsonObject el = filter.add<JsonObject>();
@@ -290,7 +292,7 @@ static void drawSpark(int gx, int gy, int gw, int gh, const Tile &t, uint16_t co
 
 static void drawTile(int slot, const Tile &t) {
     int W = tft.width(), H = tft.height();
-    int M = 5, top = 20;
+    int M = 5, top = 4;
     int w = (W - 3 * M) / 2, h = (H - top - 3 * M) / 2;
     int col = slot % 2, row = slot / 2;
     int x = M + col * (w + M), y = top + M + row * (h + M);
@@ -329,21 +331,9 @@ static void drawTile(int slot, const Tile &t) {
 }
 
 static void drawPage(const String &title, const String &status, int page, int pages) {
-    int W = tft.width();
-    uint16_t pri = bruceConfig.priColor, bg = bruceConfig.bgColor, sec = bruceConfig.secColor;
+    (void)title; (void)status; (void)pages; // header intentionally removed -- grid only
+    uint16_t bg = bruceConfig.bgColor;
     tft.fillScreen(bg);
-    tft.setTextSize(1);
-    tft.setTextColor(pri, bg);
-    tft.drawString(title, 6, 5);
-    tft.setTextColor(sec, bg);
-    tft.drawString(status, W - 6 - tft.textWidth(status), 5);
-    // page dots
-    int dotsX = W / 2 - (pages * 10) / 2;
-    for (int p = 0; p < pages; p++) {
-        if (p == page) tft.fillCircle(dotsX + p * 10, 9, 3, pri);
-        else tft.drawCircle(dotsX + p * 10, 9, 3, sec);
-    }
-
     for (int s = 0; s < 4; s++) {
         int idx = page * 4 + s;
         if (idx >= g_n) continue;
