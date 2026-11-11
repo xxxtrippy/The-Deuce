@@ -38,6 +38,7 @@ void deuceFlashlight();   // screen flashlight (boards/deuce_v11/deuce_flashligh
 void deucePassGen();      // password gen + strength (boards/deuce_v11/deuce_passwd.cpp)
 void deuceWifiQr();       // WiFi-join QR (boards/deuce_v11/deuce_wifiqr.cpp)
 void deuceBattLog();      // battery discharge logger (boards/deuce_v11/deuce_battlog.cpp)
+void deuceBench();        // pocket bench instruments (boards/deuce_v11/deuce_bench.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -69,6 +70,7 @@ void OthersMenu::optionsMenu() {
         {"Password Gen",  deucePassGen                },
         {"WiFi QR",       deuceWifiQr                 },
         {"Battery Log",   deuceBattLog                },
+        {"Pocket Bench",  deuceBench                  },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

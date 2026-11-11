@@ -274,6 +274,12 @@ OTHERS
 - Battery Log: samples the battery gauge every couple of seconds and plots the
   discharge curve, with a rough "time left" estimate from the slope. SEL starts
   CSV logging to /deuce/battlog.csv; NEXT resets the graph.
+- Pocket Bench: four small instruments on the free GPIOs. NEXT cycles them:
+  Voltmeter (averaged DC volts on the probe pin -- keep inputs at or below
+  3.3V), Logic Probe (HIGH / LOW / PULSING with a rough duty %), Frequency
+  (measures a square-ish signal's frequency via its period, up to ~100 kHz) and
+  Continuity (buzzes on GPIO32 when GPIO33 is shorted to ground). PREV changes
+  the probe pin in the first three modes. Pairs with Scope/Gen for a full bench.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail

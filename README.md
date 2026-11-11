@@ -190,6 +190,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Password Gen — strong random passwords (length + charset toggles, HW-RNG seeded) with a live entropy/strength readout, plus a check-your-own-password mode
 - WiFi QR — turn an SSID + password + security type into a `WIFI:` QR that phones scan to join
 - Battery Log — discharge-curve plot off the battery gauge with a runtime estimate and optional CSV logging to /deuce/battlog.csv
+- Pocket Bench — voltmeter (0–3.3 V), logic probe (HIGH/LOW/PULSING + duty), frequency counter, and GND continuity beeper on the free GPIOs; complements Scope/Gen
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator
