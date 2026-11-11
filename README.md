@@ -173,6 +173,9 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Weather Log — SHT41 interval logging to /deuce/weather.csv with min/max + trend graph (RTC timestamps)
 - Tripwire — magnetometer door/magnet trip: arm, baseline, alert + log to /deuce/tripwire.csv
 - Weather Forecast — IP-geolocated current conditions + 3-day forecast (open-meteo, no key)
+- Scope/Gen — mini ADC oscilloscope (live waveform, selectable timebase) + square-wave signal generator (adjustable 1 Hz–100 kHz on a free GPIO)
+- Morse — text → Morse code, visual flash + buzzer playback, adjustable WPM
+- TOTP — RFC 6238 authenticator (SHA-1, 6-digit, 30s), accounts in /deuce/totp.csv, live countdown (needs RTC set; secrets stored in plaintext on SD)
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

@@ -29,6 +29,9 @@ void deuceSiteSurvey();   // geotagged env logger (boards/deuce_v11/deuce_logtoo
 void deuceWeatherLog();   // SHT41 interval logger (boards/deuce_v11/deuce_envtools.cpp)
 void deuceTripwire();     // magnetometer tripwire (boards/deuce_v11/deuce_envtools.cpp)
 void deuceWeatherForecast(); // online forecast (boards/deuce_v11/deuce_nettools.cpp)
+void deuceScope();        // mini scope + signal gen (boards/deuce_v11/deuce_labtools.cpp)
+void deuceMorse();        // morse trainer (boards/deuce_v11/deuce_labtools.cpp)
+void deuceTotp();         // TOTP authenticator (boards/deuce_v11/deuce_totp.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -51,6 +54,9 @@ void OthersMenu::optionsMenu() {
         {"Weather Log",   deuceWeatherLog             },
         {"Tripwire",      deuceTripwire               },
         {"Weather Fcast", deuceWeatherForecast        },
+        {"Scope/Gen",     deuceScope                  },
+        {"Morse",         deuceMorse                  },
+        {"TOTP",          deuceTotp                   },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

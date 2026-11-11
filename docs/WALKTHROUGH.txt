@@ -192,6 +192,21 @@ OTHERS
 - Weather Forecast: geolocates you by IP, then pulls current conditions and a
   3-day forecast from open-meteo (no API key). Shows temp, feels-like, humidity,
   wind and daily highs/lows. Needs WiFi joined.
+- Scope/Gen: a two-in-one bench tool. SEL toggles between Mini Scope and Signal
+  Gen. Scope bursts samples an ADC pin (default GPIO39, the battery line -- safe)
+  and plots the live waveform; NEXT cycles the timebase, and it shows the min/max
+  voltage. Signal Gen puts a square wave on a free GPIO (default 32): UP/DOWN
+  halve/double the frequency (1 Hz-100 kHz), NEXT toggles the output on/off. Keep
+  the scope on a known-safe pin and never feed more than 3.3V in.
+- Morse: type any text and it encodes to Morse. The screen shows the dots/dashes;
+  SEL plays it back as a flashing box plus a buzzer beep on GPIO32. UP/DOWN adjust
+  the speed in WPM (the standard 1200/WPM unit timing).
+- TOTP: an authenticator for 6-digit, 30-second codes (RFC 6238, SHA-1). SEL adds
+  an account (name + base32 secret via the keyboard); accounts are saved to
+  /deuce/totp.csv. It lists each account with its current code and a countdown
+  bar that turns red in the last 5 seconds. The RTC must be set for codes to be
+  valid. NOTE: the secrets are stored in plaintext on the SD card -- treat the
+  card as sensitive; this is a convenience tool, not a hardware key.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
