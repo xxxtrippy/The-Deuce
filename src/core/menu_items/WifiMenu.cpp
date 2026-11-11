@@ -4,6 +4,7 @@ void deuceWifiRadio(); // THE DEUCE v1.1: boards/deuce_v11/deuce_radio.cpp
 void deuceWakeOnLan();    // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cpp
 void deuceDeviceFinder(); // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cpp
 void deuceSpeedTest();    // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools.cpp
+void deuceNtpTimeSync();  // THE DEUCE v1.1: boards/deuce_v11/deuce_timesync.cpp
 #endif
 #include "core/display.h"
 #include "core/settings.h"
@@ -106,6 +107,7 @@ void WifiMenu::optionsMenu() {
     options.push_back({"Device Finder", deuceDeviceFinder});
     options.push_back({"Wake-on-LAN", deuceWakeOnLan});
     options.push_back({"Speed Test", deuceSpeedTest});
+    options.push_back({"NTP Time Sync", deuceNtpTimeSync});
 #endif
 
     options.push_back({"Config", [this]() { configMenu(); }});

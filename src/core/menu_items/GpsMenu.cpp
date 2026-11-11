@@ -18,6 +18,10 @@
 #include "deuce_gpsextra.h"
 #define HAVE_DEUCE_GPSX 1
 #endif
+#if __has_include("deuce_timesync.h")
+#include "deuce_timesync.h"
+#define HAVE_DEUCE_TIMESYNC 1
+#endif
 
 void GpsMenu::optionsMenu() {
     options = {
@@ -36,6 +40,9 @@ void GpsMenu::optionsMenu() {
 #ifdef HAVE_DEUCE_GPSX
         {"Lap Timer",     []() { deuceLapTimer(); }      },
         {"Reverse Geo",   []() { deuceReverseGeo(); }    },
+#endif
+#ifdef HAVE_DEUCE_TIMESYNC
+        {"GPS Time Sync", []() { deuceGpsTimeSync(); }   },
 #endif
         {"Config",      [this]() { configMenu(); }    },
     };

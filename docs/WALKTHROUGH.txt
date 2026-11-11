@@ -52,6 +52,10 @@ WIFI
   plus the directed subnet broadcast) to wake that device. Needs WiFi joined.
 - Speed Test: measures latency and download throughput over your WiFi against a
   Cloudflare endpoint. SEL re-tests. Needs WiFi joined.
+- NTP Time Sync: joins WiFi and sets the clock from an internet time server
+  (UTC), also writing the battery-backed DS3231 so it persists. If NTP can't be
+  reached it falls back to reading the DS3231. Same purpose as GPS Time Sync but
+  indoors/over WiFi instead of needing a satellite fix.
 
 
 --------------------------------------------------------------------------------
@@ -197,6 +201,11 @@ GPS  (NEO-6M)
 - Reverse Geo: resolves your current GPS position to a place name. Get a fix,
   join WiFi, then SEL queries BigDataCloud (no API key) and shows the locality,
   city, region/postcode and country for where you're standing.
+- GPS Time Sync: once you have a fix, SEL sets the Deuce's clock from satellite
+  UTC time and also writes it to the battery-backed DS3231, so the time survives
+  a power cycle. This is the easiest way to fix a "RTC not set" warning (TOTP,
+  Sun Finder and Trip Computer all rely on a correct clock). The clock is set in
+  UTC so the TOTP epoch is correct.
 
 
 --------------------------------------------------------------------------------

@@ -137,6 +137,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Device Finder — lock onto an AP's BSSID and home in by live RSSI (warmer/colder)
 - Wake-on-LAN — send a magic packet to wake a device by MAC
 - Speed Test — download throughput + latency over WiFi (Cloudflare endpoint)
+- NTP Time Sync — set the system clock + battery-backed DS3231 from an internet time server (UTC), with DS3231 fallback if NTP is unreachable
 
 ### Bluetooth `BLE`
 - BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite
@@ -166,6 +167,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - RF Coverage — geotagged CC1101/WiFi/NRF RSSI logged to /deuce/rfmap.csv + live colour-coded trail map
 - Lap Timer — GPS start/finish gate: mark a point, auto-splits each lap you cross it, tracks last/best lap + lap count (GPS)
 - Reverse Geo — resolve your current GPS position to a readable place name (city / region / country) via BigDataCloud (GPS + WiFi, no key)
+- GPS Time Sync — set the system clock + battery-backed DS3231 from satellite UTC time (fixes "RTC not set" for TOTP / Sun Finder / Trip Computer)
 
 ### Others (utilities)
 - Barcodes — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD
