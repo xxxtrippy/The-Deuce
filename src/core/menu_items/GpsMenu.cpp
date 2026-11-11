@@ -6,11 +6,21 @@
 #include "modules/gps/wardriving.h"
 #include <math.h>
 
+#if __has_include("deuce_navtools.h")
+#include "deuce_navtools.h"
+#define HAVE_DEUCE_NAV 1
+#endif
+
 void GpsMenu::optionsMenu() {
     options = {
         {"Wardriving",  [this]() { wardrivingMenu(); }},
 #if !defined(LITE_VERSION)
         {"GPS Tracker", [=]() { GPSTracker(); }       },
+#endif
+#ifdef HAVE_DEUCE_NAV
+        {"Waypoint Nav",  []() { deuceWaypointNav(); }  },
+        {"Sun Finder",    []() { deuceSunFinder(); }    },
+        {"Trip Computer", []() { deuceTripComputer(); } },
 #endif
         {"Config",      [this]() { configMenu(); }    },
     };

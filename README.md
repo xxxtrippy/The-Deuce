@@ -148,6 +148,9 @@ The WebUI provides a second control surface, without requiring interaction throu
 
 ### GPS (NEO-6M)
 - GPS Tracker, Wardriving (WiFi / BLE / both)
+- Waypoint Nav — mark/enter a target, get distance + a compass arrow to it (GPS + magnetometer)
+- Sun Finder — sun azimuth/elevation + sunrise/sunset + arrow to the sun (GPS + RTC + magnetometer)
+- Trip Computer — speed / max / heading / trip distance / clock / cabin temp (GPS + mag + RTC + SHT41)
 
 ### Others (utilities)
 - Barcodes — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD

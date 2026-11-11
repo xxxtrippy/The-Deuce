@@ -135,6 +135,14 @@ GPS  (NEO-6M)
 - GPS Tracker: live position / speed / altitude and logging.
 - Wardriving: log WiFi and/or BLE devices tagged with GPS coordinates to SD
   (Scan WiFi / Scan BLE / Scan Both).
+- Waypoint Nav: SEL marks your current spot as the target, then it shows the
+  distance and a compass arrow pointing to it (arrow needs the magnetometer;
+  bearing is shown either way). Good for finding your way back to a spot.
+- Sun Finder: computes the sun's azimuth and elevation plus sunrise/sunset for
+  your GPS position, and points a compass arrow at the sun. Times use your
+  clock's timezone when the RTC is set. Solar-panel aiming, golden hour, etc.
+- Trip Computer: live speed, max speed, heading, accumulated trip distance
+  (SEL resets), altitude, clock and cabin temperature (from the SHT41).
 
 
 --------------------------------------------------------------------------------
