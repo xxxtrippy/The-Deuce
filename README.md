@@ -151,6 +151,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Waypoint Nav — mark/enter a target, get distance + a compass arrow to it (GPS + magnetometer)
 - Sun Finder — sun azimuth/elevation + sunrise/sunset + arrow to the sun (GPS + RTC + magnetometer)
 - Trip Computer — speed / max / heading / trip distance / clock / cabin temp (GPS + mag + RTC + SHT41)
+- RF Coverage — geotagged CC1101/WiFi/NRF RSSI logged to /deuce/rfmap.csv + live colour-coded trail map
 
 ### Others (utilities)
 - Barcodes — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD
@@ -160,6 +161,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Ghost Radar — RF field-strength sweep + optional MMC5983MA magnetometer (true EMF), self-calibrating
 - SHT41 — live temperature + humidity, dew point / abs. humidity / heat index, dual scrolling graphs + T-vs-RH comfort map; also feeds the status-bar temperature
 - Magnetometer — MMC5983 suite: compass (figure-8 cal), gaussmeter (µT + per-axis bars + graph), metal/magnet detector (zeroed baseline + alert), raw XYZ
+- Site Survey — one-button geotagged rows of temp/humidity/dew/heading/field/WiFi RSSI to /deuce/survey.csv (GPS + SHT41 + mag), manual or 3s auto-log
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

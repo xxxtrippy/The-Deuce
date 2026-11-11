@@ -10,6 +10,10 @@
 #include "deuce_navtools.h"
 #define HAVE_DEUCE_NAV 1
 #endif
+#if __has_include("deuce_logtools.h")
+#include "deuce_logtools.h"
+#define HAVE_DEUCE_LOG 1
+#endif
 
 void GpsMenu::optionsMenu() {
     options = {
@@ -21,6 +25,9 @@ void GpsMenu::optionsMenu() {
         {"Waypoint Nav",  []() { deuceWaypointNav(); }  },
         {"Sun Finder",    []() { deuceSunFinder(); }    },
         {"Trip Computer", []() { deuceTripComputer(); } },
+#endif
+#ifdef HAVE_DEUCE_LOG
+        {"RF Coverage",   []() { deuceRFMap(); }         },
 #endif
         {"Config",      [this]() { configMenu(); }    },
     };
