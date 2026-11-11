@@ -5,6 +5,10 @@ void deuceWakeOnLan();    // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cp
 void deuceDeviceFinder(); // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cpp
 void deuceSpeedTest();    // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools.cpp
 void deuceNtpTimeSync();  // THE DEUCE v1.1: boards/deuce_v11/deuce_timesync.cpp
+void deuceTlsInspect();   // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cpp
+void deuceHttpBanner();   // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cpp
+void deuceDnsTools();     // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cpp
+void deuceTraceroute();   // THE DEUCE v1.1: boards/deuce_v11/deuce_traceroute.cpp
 #endif
 #include "core/display.h"
 #include "core/settings.h"
@@ -108,6 +112,10 @@ void WifiMenu::optionsMenu() {
     options.push_back({"Wake-on-LAN", deuceWakeOnLan});
     options.push_back({"Speed Test", deuceSpeedTest});
     options.push_back({"NTP Time Sync", deuceNtpTimeSync});
+    options.push_back({"TLS Inspector", deuceTlsInspect});
+    options.push_back({"HTTP Banner", deuceHttpBanner});
+    options.push_back({"DNS Tools", deuceDnsTools});
+    options.push_back({"Traceroute", deuceTraceroute});
 #endif
 
     options.push_back({"Config", [this]() { configMenu(); }});

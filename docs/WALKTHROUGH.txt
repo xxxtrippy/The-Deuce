@@ -56,6 +56,20 @@ WIFI
   (UTC), also writing the battery-backed DS3231 so it persists. If NTP can't be
   reached it falls back to reading the DS3231. Same purpose as GPS Time Sync but
   indoors/over WiFi instead of needing a satellite fix.
+- TLS Inspector: type a hostname (optionally host:port, default 443) and it does
+  a TLS handshake and shows the server certificate -- subject, issuer, valid-from
+  and valid-to dates, whether it's expired (checked against the clock) and the
+  start of the SHA-256 fingerprint. Good for spotting expiring or wrong certs.
+- HTTP Banner: connects to a host (default port 80) and sends a HEAD request,
+  then lists the response headers -- HTTP status, Server / X-Powered-By banners,
+  redirects, and whether HSTS/CSP security headers are present.
+- DNS Tools: DNS lookups over HTTPS (so they work even on hostile networks).
+  Pick a record type (A, AAAA, MX, TXT, NS, or PTR to reverse an IP), enter the
+  name/IP, and it queries dns.google and lists the answers.
+- Traceroute (best-effort): enter a host/IP and it sends ICMP echoes with
+  increasing TTL, listing each router that replies with per-hop RTT until it
+  reaches the destination. It uses a raw ICMP socket, which the network stack can
+  restrict, so some hops may show "* (no reply)". UP/DOWN scrolls the result.
 
 
 --------------------------------------------------------------------------------

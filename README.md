@@ -138,6 +138,10 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Wake-on-LAN — send a magic packet to wake a device by MAC
 - Speed Test — download throughput + latency over WiFi (Cloudflare endpoint)
 - NTP Time Sync — set the system clock + battery-backed DS3231 from an internet time server (UTC), with DS3231 fallback if NTP is unreachable
+- TLS Inspector — connect to `host:443` and show the certificate subject, issuer, validity dates, expiry status and SHA-256 fingerprint
+- HTTP Banner — grab a host's HTTP status line, Server/X-Powered-By banner and whether HSTS/CSP security headers are present
+- DNS Tools — DNS-over-HTTPS lookups (A / AAAA / MX / TXT / NS / PTR-reverse) with no plaintext DNS
+- Traceroute `*best-effort*` — ICMP TTL traceroute with per-hop RTT (raw-socket based; hops may be filtered)
 
 ### Bluetooth `BLE`
 - BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite
