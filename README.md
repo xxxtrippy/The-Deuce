@@ -160,6 +160,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Sun Finder — sun azimuth/elevation + sunrise/sunset + arrow to the sun (GPS + RTC + magnetometer)
 - Trip Computer — speed / max / heading / trip distance / clock / cabin temp (GPS + mag + RTC + SHT41)
 - RF Coverage — geotagged CC1101/WiFi/NRF RSSI logged to /deuce/rfmap.csv + live colour-coded trail map
+- Lap Timer — GPS start/finish gate: mark a point, auto-splits each lap you cross it, tracks last/best lap + lap count (GPS)
+- Reverse Geo — resolve your current GPS position to a readable place name (city / region / country) via BigDataCloud (GPS + WiFi, no key)
 
 ### Others (utilities)
 - Barcodes — Code 128 / UPC-A / EAN-13 / Code 93 / 39 / 11, live display + PNG export to SD

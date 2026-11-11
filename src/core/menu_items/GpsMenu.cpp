@@ -14,6 +14,10 @@
 #include "deuce_logtools.h"
 #define HAVE_DEUCE_LOG 1
 #endif
+#if __has_include("deuce_gpsextra.h")
+#include "deuce_gpsextra.h"
+#define HAVE_DEUCE_GPSX 1
+#endif
 
 void GpsMenu::optionsMenu() {
     options = {
@@ -28,6 +32,10 @@ void GpsMenu::optionsMenu() {
 #endif
 #ifdef HAVE_DEUCE_LOG
         {"RF Coverage",   []() { deuceRFMap(); }         },
+#endif
+#ifdef HAVE_DEUCE_GPSX
+        {"Lap Timer",     []() { deuceLapTimer(); }      },
+        {"Reverse Geo",   []() { deuceReverseGeo(); }    },
 #endif
         {"Config",      [this]() { configMenu(); }    },
     };

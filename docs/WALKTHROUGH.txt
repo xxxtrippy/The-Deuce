@@ -160,6 +160,14 @@ GPS  (NEO-6M)
   of CC1101/WiFi/NRF signal to /deuce/rfmap.csv (NEXT = 2s auto-log); the
   screen plots a colour-coded trail (green=strong..red=weak) so you see
   coverage build live. Open the CSV off-device for a full heatmap.
+- Lap Timer: a GPS start/finish gate. Get a fix, then SEL marks your current
+  position as the gate. The first time you cross it the timer starts; each time
+  you cross it again (after leaving a ~30m radius) it banks a lap and shows the
+  last lap, best lap (yellow) and lap number, with the running lap in big green.
+  NEXT clears the gate. Works best outdoors with a clean sky view.
+- Reverse Geo: resolves your current GPS position to a place name. Get a fix,
+  join WiFi, then SEL queries BigDataCloud (no API key) and shows the locality,
+  city, region/postcode and country for where you're standing.
 
 
 --------------------------------------------------------------------------------
