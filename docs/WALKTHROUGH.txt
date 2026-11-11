@@ -105,6 +105,19 @@ Deuce custom RF tools:
   WARMER/colder cue and builds a per-bearing peak map (needs the magnetometer),
   drawing an arrow toward the strongest signal. Walk/turn toward "warmer" to home
   in on a transmitter. SEL resets the map.
+- Decoder: a live Sub-GHz protocol decoder. It listens on the current CC1101
+  frequency using the stock RMT OOK capture engine and, for each frame it can
+  decode, shows the protocol name, radio preset, bit length, key (hex) and base
+  pulse (TE), plus a running "caught" count. NEXT/PREV step through a set of
+  common frequencies (300-915 MHz); SEL clears the stats. Undecoded but strong
+  captures are shown as RAW with their transition count.
+- 433 Weather: receives cheap 433.92 MHz outdoor weather sensors that use the
+  very common "Nexus" OOK family (Nexus, Sencor, Digoo and many no-name units).
+  It shows temperature (big, with C and F), humidity, channel, sensor id and
+  battery state. Because the protocol carries no checksum, it waits for two
+  matching frames before trusting a reading. SEL toggles the big number C/F.
+  (FSK sensors like many Acurite/LaCrosse models are a different mode and aren't
+  covered here.)
 
 
 --------------------------------------------------------------------------------
@@ -126,6 +139,13 @@ INFRARED (IR)
 - IR Jammer: flood IR to block other remotes.
 - Intervalometer: trigger a camera's IR shutter on a timed interval for
   time-lapse photography.
+- AC Remote: a universal air-conditioner remote. Pick your A/C brand from the
+  list (only brands compiled into this build are shown), then set power/mode
+  (COOL/HEAT/DRY/FAN/AUTO/OFF with NEXT), temperature (UP/DOWN, 16-30 C) and fan
+  speed (PREV). SEL beams a full state frame over the IR LED. OFF mode sends a
+  power-off. Built on IRremoteESP8266's IRac engine, so it sends complete,
+  brand-correct frames rather than single button codes. Aim the IR LED at the
+  unit; range is a few metres.
 
 
 --------------------------------------------------------------------------------

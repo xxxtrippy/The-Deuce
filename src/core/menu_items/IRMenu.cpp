@@ -10,6 +10,7 @@
 #ifdef DEUCE_GRID_MENU
 void deuceIntervalometer(); // THE DEUCE v1.1: boards/deuce_v11/deuce_ir_tools.cpp
 void deuceIrLibrary();      // THE DEUCE v1.1: boards/deuce_v11/deuce_ir_library.cpp
+void deuceAcRemote();       // THE DEUCE v1.1: boards/deuce_v11/deuce_acremote.cpp
 #endif
 
 void IRMenu::optionsMenu() {
@@ -24,6 +25,7 @@ void IRMenu::optionsMenu() {
 #ifdef DEUCE_GRID_MENU
         {"IR Library",     [=]() { deuceIrLibrary(); }     },
         {"Intervalometer", [=]() { deuceIntervalometer(); }},
+        {"AC Remote",      [=]() { deuceAcRemote(); }      },
 #endif
 #if !defined(LITE_VERSION)
         {"IR Jammer", startIrJammer             }, // Simple frequency-adjustable jammer

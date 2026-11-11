@@ -124,6 +124,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Antenna Plot — unified multi-antenna polar RSSI pattern (CC1101 / WiFi / NRF24, per-antenna toggle, colour-coded overlay, HPBW / F-B / est. gain)
 - Live Aim — real-time per-band signal bars with peak-hold + heading, for aiming whips by measured signal
 - Fox Hunt — RF direction finding: live RSSI warmer/colder + per-bearing peak map with an arrow to the source (CC1101 + magnetometer)
+- Decoder — live Sub-GHz protocol decoder on the stock RMT OOK engine: shows protocol / preset / bit length / key / TE of each captured frame, NEXT/PREV cycles frequency
+- 433 Weather — receives common Nexus-family 433.92 MHz outdoor sensors (Nexus / Sencor / Digoo / no-names): temperature (C+F), humidity, channel, id, battery, with two-frame confirmation
 
 ### WiFi
 - Scan hosts, Sniffer, Channel Analyzer
@@ -146,6 +148,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 ### Infrared `IR`
 - IR Read, Custom IR, TV-B-Gone, IR Jammer
 - IR Library — SD-backed appliance code database + browser
+- AC Remote — universal A/C remote via IRremoteESP8266's IRac engine: pick a brand (Coolix/Daikin/Fujitsu/Gree/LG/Mitsubishi/Samsung/Toshiba/… — runtime-filtered to what's built), set power / mode / temp / fan, beam full-state frames
 - Intervalometer
 
 ### NFC / RFID (PN532)

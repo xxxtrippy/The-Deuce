@@ -18,6 +18,8 @@ void deuceFaradayTest();  // THE DEUCE v1.1: boards/deuce_v11/deuce_faraday.cpp
 void deuceAntennaPlot();  // THE DEUCE v1.1: boards/deuce_v11/deuce_antplot.cpp
 void deuceAimScreen();    // THE DEUCE v1.1: boards/deuce_v11/deuce_aim.cpp
 void deuceFoxHunt();      // THE DEUCE v1.1: boards/deuce_v11/deuce_foxhunt.cpp
+void deuceSubghzDecoder(); // THE DEUCE v1.1: boards/deuce_v11/deuce_rfdecode.cpp
+void deuceWeather433();    // THE DEUCE v1.1: boards/deuce_v11/deuce_weather433.cpp
 #endif
 
 void RFMenu::optionsMenu() {
@@ -34,6 +36,8 @@ void RFMenu::optionsMenu() {
         {"Antenna Plot",    [=]() { deuceAntennaPlot(); }},
         {"Live Aim",        [=]() { deuceAimScreen(); }},
         {"Fox Hunt",        [=]() { deuceFoxHunt(); }},
+        {"Decoder",         [=]() { deuceSubghzDecoder(); }},
+        {"433 Weather",     [=]() { deuceWeather433(); }},
 #endif
 #if !defined(LITE_VERSION)
         {"RSSI Spectrum",   rf_CC1101_rssi            }, // @Pirata
