@@ -23,6 +23,7 @@ void deuceCrypto();       // live crypto tracker (boards/deuce_v11/deuce_markets
 void deuceMoney();        // live currency tracker (boards/deuce_v11/deuce_markets.cpp)
 void deuceKeyCopier();    // key bitting visualizer (boards/deuce_v11/deuce_keycopier.cpp)
 void deuceHowTo();        // on-device walkthrough guide (boards/deuce_v11/deuce_howto.cpp)
+void deuceSht41();        // SHT41 temp/humidity dashboard (boards/deuce_v11/deuce_sht41.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -39,6 +40,7 @@ void OthersMenu::optionsMenu() {
         {"Money",         deuceMoney                  },
         {"Key Copier",    deuceKeyCopier              },
         {"How To",        deuceHowTo                  },
+        {"SHT41",         deuceSht41                  },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

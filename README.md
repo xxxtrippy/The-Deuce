@@ -155,6 +155,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Crypto tracker — top coins, 2×2 grid, 24h sparklines
 - Money tracker — USD vs GBP / EUR / CAD / CNY / JPY / AUD / MXN / INR, trend sparklines
 - Ghost Radar — RF field-strength sweep + optional MMC5983MA magnetometer (true EMF), self-calibrating
+- SHT41 — live temperature + humidity, dew point / abs. humidity / heat index, dual scrolling graphs + T-vs-RH comfort map; also feeds the status-bar temperature
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

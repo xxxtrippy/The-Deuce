@@ -8,6 +8,11 @@
 #include <interface.h> //for charging ischarging to print charging indicator
 #include <memory>
 
+#if __has_include("deuce_sht41.h")   // Deuce: live SHT41 temperature in the status bar
+#include "deuce_sht41.h"
+#define HAVE_SHT41 1
+#endif
+
 #define MAX_MENU_SIZE (int)(tftHeight / 25)
 
 // Send the ST7789 into or out of sleep mode
@@ -1001,6 +1006,19 @@ void drawStatusBar() {
             idx++;
         }
     }
+
+#ifdef HAVE_SHT41
+    {   // live SHT41 temperature, just left of the battery indicator
+        float tC;
+        if (sht41CachedTempC(tC)) {
+            char ts[12];
+            snprintf(ts, sizeof(ts), "%.0fF", tC * 9.0f / 5.0f + 32.0f);
+            tft.fillRect(tftWidth - 126, 7, 38, 18, bruceConfig.bgColor);
+            tft.setTextColor(bruceConfig.priColor, bruceConfig.bgColor);
+            tft.drawRightString(ts, tftWidth - 90, 12, 1);
+        }
+    }
+#endif
 }
 
 void drawMainBorder(bool clear) {

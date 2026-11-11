@@ -154,6 +154,11 @@ OTHERS
 - Ghost Radar: sweep RF field strength (with the magnetometer, a true EMF
   channel). It self-calibrates to the room baseline, then flags spikes. A
   field-strength tool, not a literal ghost detector.
+- SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
+  dew point, absolute humidity, heat index and a comfort label; dual scrolling
+  graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
+  over the comfort zone); NEXT switches C/F. The sensor also drives the live
+  temperature shown in the status bar.
 - Resistor Calc: pick the colour bands (4 / 5 / 6) and it shows resistance and
   tolerance; it also detects when the bands were entered in reverse.
 - Crypto: live top-coin prices in a 2x2 grid, each tile showing price, 24h
