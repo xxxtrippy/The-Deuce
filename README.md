@@ -27,7 +27,10 @@ No bullshit. No unnecessary overhead. Just a custom environment, made for direct
 - SubGHz RF and 2.4 GHz radio experimentation
 - Infrared transmission and reception
 - NFC / RFID interaction
-- GPS positioning and RTC integration
+- GPS positioning, navigation, and RTC integration
+- Environmental sensing — temperature / humidity (SHT41)
+- Magnetometer — compass, gaussmeter, metal detection (MMC5983MA)
+- On-device data logging to SD (survey / RF / weather / tripwire / NFC)
 - SD based storage and utilities
 - Local device WebUI
 - On-device interface for Anthropic's Claude AI
@@ -170,6 +173,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Lock Calc — lock combination calculator
 - VIN Decoder — offline WMI + online NHTSA lookup
 - Health Checks — eight network modules (see below)
+- How To — on-device walkthrough guide covering every module and option (scrollable)
 - BadUSB / HID, USB Keyboard, USB Clicker, USB U2F, Microphone, Record, Spectrum
 
 ### Clock
@@ -194,6 +198,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 | NFC / RFID | PN532 |
 | Timekeeping | DS3231 RTC |
 | Magnetometer | MMC5983MA — true magnetic EMF channel |
+| Temp / Humidity | SHT41 (I²C 0x44) — feeds the status-bar temperature |
 | Storage | SD card |
 | Display | 2.4-inch ILI9341, 320×240 |
 | Touch | XPT2046 resistive touchscreen |
@@ -273,6 +278,19 @@ Current development targets:
 - [x] Key Copier — mechanical key bitting visualizer
 - [x] Web USB flasher — browser WebSerial installer (esp-web-tools), auto-published by CI
 - [x] Live Aim — real-time per-band signal bars (CC1101 dBm / WiFi dBm / NRF24 carrier %) with peak-hold + heading, for aiming antennas by measured signal
+- [x] SHT41 — live temp/humidity dashboard (dew point, abs. humidity, heat index, dual graphs, T-vs-RH comfort map) + status-bar temperature
+- [x] Magnetometer suite — compass (figure-8 cal), gaussmeter, metal/magnet detector, raw XYZ (MMC5983)
+- [x] Waypoint Nav — mark a target, distance + compass arrow to it (GPS + magnetometer)
+- [x] Sun Finder — sun azimuth/elevation + sunrise/sunset + arrow to the sun (GPS + RTC + magnetometer)
+- [x] Trip Computer — speed / max / heading / trip distance / clock / cabin temp
+- [x] RF Coverage — geotagged CC1101/WiFi/NRF RSSI → /deuce/rfmap.csv + live colour-coded trail
+- [x] Site Survey — geotagged temp/humidity/heading/field/WiFi logger → /deuce/survey.csv
+- [x] Weather Log — SHT41 interval logging → /deuce/weather.csv with min/max + trend
+- [x] Tripwire — magnetometer door/magnet trip alarm → /deuce/tripwire.csv
+- [x] NFC Access Log — tap tags, log UID + timestamp → /deuce/nfclog.csv (PN532)
+- [x] On-device How To — scrollable walkthrough of every module (Others → How To)
+- [x] Removed LoRa / Ethernet / FM features and trimmed their build weight
+- [x] Screen orientation flipped (ROTATION 1); calibration flow unchanged
 
 Features are developed incrementally and remain subject to hardware, memory, and firmware constraints.
 
