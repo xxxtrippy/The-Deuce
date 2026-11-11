@@ -46,6 +46,10 @@ WIFI
 - WiFi Pass Recovery: read back saved network credentials.
 - WiFi Radio: SD-backed synced internet-radio station with a browser player
   (up to ~8 listeners).
+- Device Finder: scan and pick an AP, then it shows that BSSID's live RSSI with
+  a warmer/colder meter and best-seen value so you can physically walk it down.
+- Wake-on-LAN: enter a target MAC and it sends a magic packet (port 9 broadcast,
+  plus the directed subnet broadcast) to wake that device. Needs WiFi joined.
 
 
 --------------------------------------------------------------------------------
@@ -95,6 +99,10 @@ Deuce custom RF tools:
   Each bar carries a white peak-hold tick; SEL resets the peaks; heading shows
   top-right when the magnetometer is fitted. Bend a whip toward your target
   and watch that band's bar climb -- stop at the peak.
+- Fox Hunt: RF direction finding. Pick a CC1101 band; it shows live RSSI with a
+  WARMER/colder cue and builds a per-bearing peak map (needs the magnetometer),
+  drawing an arrow toward the strongest signal. Walk/turn toward "warmer" to home
+  in on a transmitter. SEL resets the map.
 
 
 --------------------------------------------------------------------------------

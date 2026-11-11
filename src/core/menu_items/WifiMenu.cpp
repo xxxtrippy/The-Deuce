@@ -1,6 +1,8 @@
 #include "WifiMenu.h"
 #ifdef DEUCE_GRID_MENU
 void deuceWifiRadio(); // THE DEUCE v1.1: boards/deuce_v11/deuce_radio.cpp
+void deuceWakeOnLan();    // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cpp
+void deuceDeviceFinder(); // THE DEUCE v1.1: boards/deuce_v11/deuce_wifitools.cpp
 #endif
 #include "core/display.h"
 #include "core/settings.h"
@@ -100,6 +102,8 @@ void WifiMenu::optionsMenu() {
 
 #ifdef DEUCE_GRID_MENU
     options.push_back({"WiFi Radio", deuceWifiRadio});
+    options.push_back({"Device Finder", deuceDeviceFinder});
+    options.push_back({"Wake-on-LAN", deuceWakeOnLan});
 #endif
 
     options.push_back({"Config", [this]() { configMenu(); }});

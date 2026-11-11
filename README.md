@@ -123,6 +123,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Faraday Test — RF-shielding attenuation + verdict
 - Antenna Plot — unified multi-antenna polar RSSI pattern (CC1101 / WiFi / NRF24, per-antenna toggle, colour-coded overlay, HPBW / F-B / est. gain)
 - Live Aim — real-time per-band signal bars with peak-hold + heading, for aiming whips by measured signal
+- Fox Hunt — RF direction finding: live RSSI warmer/colder + per-bearing peak map with an arrow to the source (CC1101 + magnetometer)
 
 ### WiFi
 - Scan hosts, Sniffer, Channel Analyzer
@@ -130,6 +131,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Brucegotchi, NetCut, Responder, Reverse Shell, SSH, TelNET, SOCKS4 proxy, TCP client / listen, Wireguard
 - Start AP, Connect, Change MAC, WiFi password recovery
 - WiFi Radio — SD-backed synced web radio station (browser player, ~8 listeners)
+- Device Finder — lock onto an AP's BSSID and home in by live RSSI (warmer/colder)
+- Wake-on-LAN — send a magic packet to wake a device by MAC
 
 ### Bluetooth `BLE`
 - BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite

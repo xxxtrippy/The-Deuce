@@ -17,6 +17,7 @@ void deuceTpmsReader();   // THE DEUCE v1.1: boards/deuce_v11/deuce_tpms.cpp
 void deuceFaradayTest();  // THE DEUCE v1.1: boards/deuce_v11/deuce_faraday.cpp
 void deuceAntennaPlot();  // THE DEUCE v1.1: boards/deuce_v11/deuce_antplot.cpp
 void deuceAimScreen();    // THE DEUCE v1.1: boards/deuce_v11/deuce_aim.cpp
+void deuceFoxHunt();      // THE DEUCE v1.1: boards/deuce_v11/deuce_foxhunt.cpp
 #endif
 
 void RFMenu::optionsMenu() {
@@ -32,6 +33,7 @@ void RFMenu::optionsMenu() {
         {"Faraday Test",    [=]() { deuceFaradayTest(); }},
         {"Antenna Plot",    [=]() { deuceAntennaPlot(); }},
         {"Live Aim",        [=]() { deuceAimScreen(); }},
+        {"Fox Hunt",        [=]() { deuceFoxHunt(); }},
 #endif
 #if !defined(LITE_VERSION)
         {"RSSI Spectrum",   rf_CC1101_rssi            }, // @Pirata
