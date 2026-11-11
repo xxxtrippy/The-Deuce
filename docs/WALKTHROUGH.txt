@@ -253,6 +253,16 @@ OTHERS
   bar that turns red in the last 5 seconds. The RTC must be set for codes to be
   valid. NOTE: the secrets are stored in plaintext on the SD card -- treat the
   card as sensitive; this is a convenience tool, not a hardware key.
+- Crypto Tools: an on-device encoding/hashing toolkit. Pick an operation
+  (SHA-256, SHA-1, MD5, Base64 encode/decode, Hex encode/decode, ROT13, URL
+  encode/decode), type your input on the keyboard and read the result; long
+  results scroll with UP/DOWN. Handy for CTFs and quick conversions offline.
+- Random: hardware random-number toys. The ESP32's hardware RNG is remixed with
+  live ADC noise. NEXT cycles mode (coin flip / dice / number / hex bytes), SEL
+  rolls again; in Dice mode PREV changes the die (d4-d100), in Number mode SEL
+  lets you set the min/max first.
+- Flashlight: turns the screen into a light. NEXT cycles torch (solid white),
+  strobe (UP/DOWN change the rate) and an SOS beacon.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail

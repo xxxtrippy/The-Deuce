@@ -184,6 +184,9 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Scope/Gen — mini ADC oscilloscope (live waveform, selectable timebase) + square-wave signal generator (adjustable 1 Hz–100 kHz on a free GPIO)
 - Morse — text → Morse code, visual flash + buzzer playback, adjustable WPM
 - TOTP — RFC 6238 authenticator (SHA-1, 6-digit, 30s), accounts in /deuce/totp.csv, live countdown (needs RTC set; secrets stored in plaintext on SD)
+- Crypto Tools — on-device CyberChef-lite: MD5 / SHA-1 / SHA-256 hashes, Base64 + Hex encode/decode, ROT13, URL encode/decode, with a scrollable result view
+- Random — hardware-RNG toys (ESP32 HW RNG remixed with ADC noise): coin flip, polyhedral dice (d4–d100), number-in-range, random hex bytes
+- Flashlight — full-screen white torch, adjustable strobe, SOS beacon
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

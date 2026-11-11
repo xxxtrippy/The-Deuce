@@ -32,6 +32,9 @@ void deuceWeatherForecast(); // online forecast (boards/deuce_v11/deuce_nettools
 void deuceScope();        // mini scope + signal gen (boards/deuce_v11/deuce_labtools.cpp)
 void deuceMorse();        // morse trainer (boards/deuce_v11/deuce_labtools.cpp)
 void deuceTotp();         // TOTP authenticator (boards/deuce_v11/deuce_totp.cpp)
+void deuceCrypto2();      // crypto/encoding toolkit (boards/deuce_v11/deuce_crypto.cpp)
+void deuceRng();          // hardware RNG toys (boards/deuce_v11/deuce_rng.cpp)
+void deuceFlashlight();   // screen flashlight (boards/deuce_v11/deuce_flashlight.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -57,6 +60,9 @@ void OthersMenu::optionsMenu() {
         {"Scope/Gen",     deuceScope                  },
         {"Morse",         deuceMorse                  },
         {"TOTP",          deuceTotp                   },
+        {"Crypto Tools",  deuceCrypto2                },
+        {"Random",        deuceRng                    },
+        {"Flashlight",    deuceFlashlight             },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)
