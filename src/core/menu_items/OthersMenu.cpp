@@ -35,6 +35,9 @@ void deuceTotp();         // TOTP authenticator (boards/deuce_v11/deuce_totp.cpp
 void deuceCrypto2();      // crypto/encoding toolkit (boards/deuce_v11/deuce_crypto.cpp)
 void deuceRng();          // hardware RNG toys (boards/deuce_v11/deuce_rng.cpp)
 void deuceFlashlight();   // screen flashlight (boards/deuce_v11/deuce_flashlight.cpp)
+void deucePassGen();      // password gen + strength (boards/deuce_v11/deuce_passwd.cpp)
+void deuceWifiQr();       // WiFi-join QR (boards/deuce_v11/deuce_wifiqr.cpp)
+void deuceBattLog();      // battery discharge logger (boards/deuce_v11/deuce_battlog.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -63,6 +66,9 @@ void OthersMenu::optionsMenu() {
         {"Crypto Tools",  deuceCrypto2                },
         {"Random",        deuceRng                    },
         {"Flashlight",    deuceFlashlight             },
+        {"Password Gen",  deucePassGen                },
+        {"WiFi QR",       deuceWifiQr                 },
+        {"Battery Log",   deuceBattLog                },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

@@ -187,6 +187,9 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Crypto Tools — on-device CyberChef-lite: MD5 / SHA-1 / SHA-256 hashes, Base64 + Hex encode/decode, ROT13, URL encode/decode, with a scrollable result view
 - Random — hardware-RNG toys (ESP32 HW RNG remixed with ADC noise): coin flip, polyhedral dice (d4–d100), number-in-range, random hex bytes
 - Flashlight — full-screen white torch, adjustable strobe, SOS beacon
+- Password Gen — strong random passwords (length + charset toggles, HW-RNG seeded) with a live entropy/strength readout, plus a check-your-own-password mode
+- WiFi QR — turn an SSID + password + security type into a `WIFI:` QR that phones scan to join
+- Battery Log — discharge-curve plot off the battery gauge with a runtime estimate and optional CSV logging to /deuce/battlog.csv
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

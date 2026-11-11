@@ -263,6 +263,17 @@ OTHERS
   lets you set the min/max first.
 - Flashlight: turns the screen into a light. NEXT cycles torch (solid white),
   strobe (UP/DOWN change the rate) and an SOS beacon.
+- Password Gen: generates strong passwords. UP/DOWN set the length, NEXT selects
+  a character set (a-z / A-Z / 0-9 / symbols) and SEL toggles it on/off and
+  regenerates; a live bit-entropy estimate and verdict are shown. PREV switches
+  to Check mode, where SEL lets you type a password and rates its strength.
+  Random bytes come from the ESP32 hardware RNG mixed with ADC noise.
+- WiFi QR: enter an SSID, pick the security (WPA/WEP/open) and enter the
+  password; it builds the standard WIFI: payload and shows a QR that phones scan
+  to join the network. Nothing is transmitted -- it's just a QR.
+- Battery Log: samples the battery gauge every couple of seconds and plots the
+  discharge curve, with a rough "time left" estimate from the slope. SEL starts
+  CSV logging to /deuce/battlog.csv; NEXT resets the graph.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
