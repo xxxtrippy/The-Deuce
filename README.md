@@ -133,6 +133,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - WiFi Radio — SD-backed synced web radio station (browser player, ~8 listeners)
 - Device Finder — lock onto an AP's BSSID and home in by live RSSI (warmer/colder)
 - Wake-on-LAN — send a magic packet to wake a device by MAC
+- Speed Test — download throughput + latency over WiFi (Cloudflare endpoint)
 
 ### Bluetooth `BLE`
 - BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite
@@ -171,6 +172,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Site Survey — one-button geotagged rows of temp/humidity/dew/heading/field/WiFi RSSI to /deuce/survey.csv (GPS + SHT41 + mag), manual or 3s auto-log
 - Weather Log — SHT41 interval logging to /deuce/weather.csv with min/max + trend graph (RTC timestamps)
 - Tripwire — magnetometer door/magnet trip: arm, baseline, alert + log to /deuce/tripwire.csv
+- Weather Forecast — IP-geolocated current conditions + 3-day forecast (open-meteo, no key)
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

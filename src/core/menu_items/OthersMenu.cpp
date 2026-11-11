@@ -28,6 +28,7 @@ void deuceMagnetometer(); // MMC5983 magnetometer suite (boards/deuce_v11/deuce_
 void deuceSiteSurvey();   // geotagged env logger (boards/deuce_v11/deuce_logtools.cpp)
 void deuceWeatherLog();   // SHT41 interval logger (boards/deuce_v11/deuce_envtools.cpp)
 void deuceTripwire();     // magnetometer tripwire (boards/deuce_v11/deuce_envtools.cpp)
+void deuceWeatherForecast(); // online forecast (boards/deuce_v11/deuce_nettools.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -49,6 +50,7 @@ void OthersMenu::optionsMenu() {
         {"Site Survey",   deuceSiteSurvey             },
         {"Weather Log",   deuceWeatherLog             },
         {"Tripwire",      deuceTripwire               },
+        {"Weather Fcast", deuceWeatherForecast        },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

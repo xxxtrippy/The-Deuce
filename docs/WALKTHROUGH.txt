@@ -50,6 +50,8 @@ WIFI
   a warmer/colder meter and best-seen value so you can physically walk it down.
 - Wake-on-LAN: enter a target MAC and it sends a magic packet (port 9 broadcast,
   plus the directed subnet broadcast) to wake that device. Needs WiFi joined.
+- Speed Test: measures latency and download throughput over your WiFi against a
+  Cloudflare endpoint. SEL re-tests. Needs WiFi joined.
 
 
 --------------------------------------------------------------------------------
@@ -187,6 +189,9 @@ OTHERS
   if a magnet/ferrous object moves the field past the threshold it flags
   TRIPPED, logs the event to /deuce/tripwire.csv, and counts trips. NEXT
   re-baselines. Good as a door/drawer sensor.
+- Weather Forecast: geolocates you by IP, then pulls current conditions and a
+  3-day forecast from open-meteo (no API key). Shows temp, feels-like, humidity,
+  wind and daily highs/lows. Needs WiFi joined.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
