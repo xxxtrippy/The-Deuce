@@ -26,6 +26,8 @@ void deuceHowTo();        // on-device walkthrough guide (boards/deuce_v11/deuce
 void deuceSht41();        // SHT41 temp/humidity dashboard (boards/deuce_v11/deuce_sht41.cpp)
 void deuceMagnetometer(); // MMC5983 magnetometer suite (boards/deuce_v11/deuce_mag.cpp)
 void deuceSiteSurvey();   // geotagged env logger (boards/deuce_v11/deuce_logtools.cpp)
+void deuceWeatherLog();   // SHT41 interval logger (boards/deuce_v11/deuce_envtools.cpp)
+void deuceTripwire();     // magnetometer tripwire (boards/deuce_v11/deuce_envtools.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -45,6 +47,8 @@ void OthersMenu::optionsMenu() {
         {"SHT41",         deuceSht41                  },
         {"Magnetometer",  deuceMagnetometer           },
         {"Site Survey",   deuceSiteSurvey             },
+        {"Weather Log",   deuceWeatherLog             },
+        {"Tripwire",      deuceTripwire               },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

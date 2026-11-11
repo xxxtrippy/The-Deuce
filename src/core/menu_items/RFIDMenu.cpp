@@ -13,6 +13,10 @@
 #ifndef LITE_VERSION
 #include "modules/rfid/emv_reader.hpp"
 #endif
+#if __has_include("deuce_envtools.h")
+#include "deuce_envtools.h"
+#define HAVE_DEUCE_ENV 1
+#endif
 void RFIDMenu::optionsMenu() {
     options = {
 #if !defined(REMOVE_RFID_HW_INTERFACE)  // Remove Hardware interface menu due to lack of external GPIO
@@ -49,6 +53,9 @@ void RFIDMenu::optionsMenu() {
 #if !defined(REMOVE_RFID_HW_INTERFACE) // Remove Hardware interface menu due to lack of external GPIO
     options.push_back({"PN532 UART", [=]() { PN532KillerTools(); }});
 #endif
+#endif
+#ifdef HAVE_DEUCE_ENV
+    options.push_back({"Access Log", [=]() { deuceNfcLog(); }});
 #endif
     options.push_back({"Config", [this]() { configMenu(); }});
 

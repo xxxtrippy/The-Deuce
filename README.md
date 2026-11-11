@@ -144,6 +144,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 ### NFC / RFID (PN532)
 - Scan / Read tag, Read 125 kHz, Read EMV
 - Write / Emulate NDEF, Chameleon, Amiibolink, SRIX tool, Add MIF key
+- Access Log — tap tags to log UID + RTC timestamp to /deuce/nfclog.csv (PN532)
 - iButton
 
 ### GPS (NEO-6M)
@@ -162,6 +163,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 - SHT41 — live temperature + humidity, dew point / abs. humidity / heat index, dual scrolling graphs + T-vs-RH comfort map; also feeds the status-bar temperature
 - Magnetometer — MMC5983 suite: compass (figure-8 cal), gaussmeter (µT + per-axis bars + graph), metal/magnet detector (zeroed baseline + alert), raw XYZ
 - Site Survey — one-button geotagged rows of temp/humidity/dew/heading/field/WiFi RSSI to /deuce/survey.csv (GPS + SHT41 + mag), manual or 3s auto-log
+- Weather Log — SHT41 interval logging to /deuce/weather.csv with min/max + trend graph (RTC timestamps)
+- Tripwire — magnetometer door/magnet trip: arm, baseline, alert + log to /deuce/tripwire.csv
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

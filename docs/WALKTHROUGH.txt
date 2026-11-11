@@ -126,6 +126,9 @@ NFC / RFID  (PN532, under I2C -> RFID)
 - Read EMV: read a contactless card's public data.
 - Write NDEF / Emulate NDEF: write records or emulate a tag.
 - Chameleon / Amiibolink / SRIX Tool / Add MIF Key: specialist tag tools.
+- Access Log: tap tags and each new UID is logged with an RTC timestamp to
+  /deuce/nfclog.csv (debounced so one tap = one row). An attendance / access
+  tracker using the PN532.
 - iButton (under Others): read / emulate 1-Wire iButton keys.
 
 
@@ -169,6 +172,13 @@ OTHERS
 - Site Survey: a geotagged environment logger. SEL writes a row (time, GPS,
   altitude, temp/humidity/dew point, heading, magnetic field, WiFi RSSI) to
   /deuce/survey.csv; NEXT toggles a 3s auto-log while you move. Needs a GPS fix.
+- Weather Log: SHT41 logging for keeps. Auto-logs temp/humidity (with RTC
+  timestamps and dew point) to /deuce/weather.csv every 60s (NEXT toggles,
+  SEL logs now), tracks session min/max and draws a temperature trend graph.
+- Tripwire: a magnetometer trip alarm. SEL arms (it baselines the field);
+  if a magnet/ferrous object moves the field past the threshold it flags
+  TRIPPED, logs the event to /deuce/tripwire.csv, and counts trips. NEXT
+  re-baselines. Good as a door/drawer sensor.
 - SHT41: live temperature + humidity from the I2C SHT41. Big T/RH readout plus
   dew point, absolute humidity, heat index and a comfort label; dual scrolling
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
