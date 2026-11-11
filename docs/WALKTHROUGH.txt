@@ -159,6 +159,11 @@ OTHERS
   graphs of T and RH; SEL toggles a T-vs-RH comfort map (current point + trail
   over the comfort zone); NEXT switches C/F. The sensor also drives the live
   temperature shown in the status bar.
+- Magnetometer: MMC5983 suite. SEL cycles four views -- Compass (rotating rose,
+  heading, cardinal; NEXT runs a figure-8 hard-iron calibration), Field Meter
+  (total field in uT, per-axis bars, scrolling graph; NEXT resets min/max),
+  Metal Detect (deviation from a zeroed baseline with a DETECT alert; NEXT
+  re-zeroes), and Raw XYZ (per-axis uT + magnitude). No extra parts needed.
 - Resistor Calc: pick the colour bands (4 / 5 / 6) and it shows resistance and
   tolerance; it also detects when the bands were entered in reverse.
 - Crypto: live top-coin prices in a 2x2 grid, each tile showing price, 24h
