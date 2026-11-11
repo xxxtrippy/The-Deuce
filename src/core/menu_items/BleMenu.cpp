@@ -12,6 +12,11 @@
 #endif
 #include <globals.h>
 
+#if __has_include("deuce_bletools.h")
+#include "deuce_bletools.h"
+#define HAVE_DEUCE_BLE 1
+#endif
+
 void BleMenu::optionsMenu() {
     options.clear();
 #if !defined(LITE_VERSION)
@@ -34,6 +39,10 @@ void BleMenu::optionsMenu() {
     options.push_back({"BLE Keyboard", [=]() { ducky_keyboard(hid_ble, true); }});
 #endif
     options.push_back({"BLE Spam", [=]() { spamMenu(); }});
+#ifdef HAVE_DEUCE_BLE
+    options.push_back({"Tracker Scan", [=]() { deuceBleTracker(); }});
+    options.push_back({"GATT Explorer", [=]() { deuceBleGatt(); }});
+#endif
 
 #if !defined(LITE_VERSION)
     options.push_back({"BLE Suite", [=]() { BleSuiteMenu(); }});

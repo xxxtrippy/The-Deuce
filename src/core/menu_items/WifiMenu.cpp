@@ -9,6 +9,7 @@ void deuceTlsInspect();   // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cp
 void deuceHttpBanner();   // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cpp
 void deuceDnsTools();     // THE DEUCE v1.1: boards/deuce_v11/deuce_nettools2.cpp
 void deuceTraceroute();   // THE DEUCE v1.1: boards/deuce_v11/deuce_traceroute.cpp
+void deuceProbeLog();     // THE DEUCE v1.1: boards/deuce_v11/deuce_probelog.cpp
 #endif
 #include "core/display.h"
 #include "core/settings.h"
@@ -116,6 +117,7 @@ void WifiMenu::optionsMenu() {
     options.push_back({"HTTP Banner", deuceHttpBanner});
     options.push_back({"DNS Tools", deuceDnsTools});
     options.push_back({"Traceroute", deuceTraceroute});
+    options.push_back({"Probe Logger", deuceProbeLog});
 #endif
 
     options.push_back({"Config", [this]() { configMenu(); }});

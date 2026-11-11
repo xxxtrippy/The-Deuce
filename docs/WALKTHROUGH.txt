@@ -70,6 +70,12 @@ WIFI
   increasing TTL, listing each router that replies with per-hop RTT until it
   reaches the destination. It uses a raw ICMP socket, which the network stack can
   restrict, so some hops may show "* (no reply)". UP/DOWN scrolls the result.
+- Probe Logger: listens in promiscuous mode and logs the probe requests that
+  nearby phones and laptops broadcast -- their MAC and the SSIDs they're looking
+  for. It channel-hops across 2.4 GHz and shows a live list of seen clients with
+  the network they probed, RSSI and a hit count. SEL starts CSV logging to
+  /deuce/probes.csv; NEXT clears. Great for seeing who/what is around. (For a
+  full .pcap of all frames, use WiFi > Sniffer instead.)
 
 
 --------------------------------------------------------------------------------
@@ -82,6 +88,15 @@ BLUETOOTH (BLE)
   remote to control a paired computer or slide deck.
 - iBeacon: broadcast an iBeacon.
 - Ninebot: scooter-specific BLE commands.
+- Tracker Scan: scans for Bluetooth item trackers -- AirTag/FindMy, Tile and
+  Samsung SmartTag -- and lists what it sees with RSSI and how many scan rounds
+  each has appeared in. A tracker seen for 3+ rounds turns red and is flagged
+  "FOLLOWING?", the anti-stalking heuristic: a tag that keeps showing up as you
+  move may be travelling with you. Runs continuously until ESC.
+- GATT Explorer: scans for 5s, lets you pick a BLE device, connects and walks
+  its GATT table -- every service, its characteristics, their properties (R/W/N)
+  and, where readable, the current value (text or hex). UP/DOWN scrolls. A quick
+  way to poke at what a BLE gadget exposes.
 
 
 --------------------------------------------------------------------------------

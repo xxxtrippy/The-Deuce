@@ -142,10 +142,13 @@ The WebUI provides a second control surface, without requiring interaction throu
 - HTTP Banner — grab a host's HTTP status line, Server/X-Powered-By banner and whether HSTS/CSP security headers are present
 - DNS Tools — DNS-over-HTTPS lookups (A / AAAA / MX / TXT / NS / PTR-reverse) with no plaintext DNS
 - Traceroute `*best-effort*` — ICMP TTL traceroute with per-hop RTT (raw-socket based; hops may be filtered)
+- Probe Logger — promiscuous probe-request capture: logs nearby devices' MACs and the SSIDs they're hunting for, with RSSI + hit count, channel-hopping across 2.4 GHz, optional CSV to /deuce/probes.csv (full .pcap is the existing Sniffer)
 
 ### Bluetooth `BLE`
 - BLE Scan, BLE Sniffer, BLE Spam, Bad BLE, BLE Suite
 - BLE Keyboard, Media Cmds, Presenter mode, iBeacon, Ninebot
+- Tracker Scan — detect AirTag/FindMy, Tile and Samsung SmartTag item trackers nearby; flags any that persist across scans (possible stalking)
+- GATT Explorer — connect to a BLE device and enumerate its services, characteristics, properties (R/W/N) and readable values
 
 ### 2.4 GHz `NRF24`
 - Information, Spectrum, NRF Jammer, MouseJack
