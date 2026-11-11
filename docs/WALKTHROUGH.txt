@@ -118,6 +118,15 @@ Deuce custom RF tools:
   matching frames before trusting a reading. SEL toggles the big number C/F.
   (FSK sensors like many Acurite/LaCrosse models are a different mode and aren't
   covered here.)
+- POCSAG (EXPERIMENTAL): a pager decoder. Unlike the OOK tools above, POCSAG is
+  2-FSK, so this reconfigures the CC1101 into asynchronous-FSK mode, bit-bangs
+  the raw data line (GDO0), recovers the bit stream, hunts the POCSAG frame-sync
+  word and decodes the 32-bit codewords into a pager address (RIC) and numeric
+  or alphanumeric message. NEXT cycles the baud rate (512 / 1200 / 2400). It
+  listens on the CC1101's configured frequency, so set that to your local pager
+  channel first. This path can't be validated without a live pager signal and
+  the async bit-recovery timing is board-sensitive -- treat it as a starting
+  point to tune on real signals, not a finished decoder.
 
 
 --------------------------------------------------------------------------------

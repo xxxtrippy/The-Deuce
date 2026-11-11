@@ -126,6 +126,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Fox Hunt — RF direction finding: live RSSI warmer/colder + per-bearing peak map with an arrow to the source (CC1101 + magnetometer)
 - Decoder — live Sub-GHz protocol decoder on the stock RMT OOK engine: shows protocol / preset / bit length / key / TE of each captured frame, NEXT/PREV cycles frequency
 - 433 Weather — receives common Nexus-family 433.92 MHz outdoor sensors (Nexus / Sencor / Digoo / no-names): temperature (C+F), humidity, channel, id, battery, with two-frame confirmation
+- POCSAG `*experimental*` — pager decoder: drives the CC1101 in async 2-FSK, bit-bangs GDO0, hunts the frame sync and decodes RIC + numeric/alphanumeric messages (512/1200/2400 baud). Async bit-recovery timing is board-sensitive — needs field-tuning on live signals
 
 ### WiFi
 - Scan hosts, Sniffer, Channel Analyzer

@@ -20,6 +20,7 @@ void deuceAimScreen();    // THE DEUCE v1.1: boards/deuce_v11/deuce_aim.cpp
 void deuceFoxHunt();      // THE DEUCE v1.1: boards/deuce_v11/deuce_foxhunt.cpp
 void deuceSubghzDecoder(); // THE DEUCE v1.1: boards/deuce_v11/deuce_rfdecode.cpp
 void deuceWeather433();    // THE DEUCE v1.1: boards/deuce_v11/deuce_weather433.cpp
+void deucePocsag();        // THE DEUCE v1.1: boards/deuce_v11/deuce_pocsag.cpp (experimental)
 #endif
 
 void RFMenu::optionsMenu() {
@@ -38,6 +39,7 @@ void RFMenu::optionsMenu() {
         {"Fox Hunt",        [=]() { deuceFoxHunt(); }},
         {"Decoder",         [=]() { deuceSubghzDecoder(); }},
         {"433 Weather",     [=]() { deuceWeather433(); }},
+        {"POCSAG *exp*",    [=]() { deucePocsag(); }},
 #endif
 #if !defined(LITE_VERSION)
         {"RSSI Spectrum",   rf_CC1101_rssi            }, // @Pirata
