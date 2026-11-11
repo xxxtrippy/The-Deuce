@@ -1011,11 +1011,14 @@ void drawStatusBar() {
     {   // live SHT41 temperature, just left of the battery indicator
         float tC;
         if (sht41CachedTempC(tC)) {
-            char ts[12];
-            snprintf(ts, sizeof(ts), "%.0fF", tC * 9.0f / 5.0f + 32.0f);
-            tft.fillRect(tftWidth - 126, 7, 38, 18, bruceConfig.bgColor);
+            int tF = (int)(tC * 9.0f / 5.0f + 32.0f + 0.5f);
+            char ts[8];
+            snprintf(ts, sizeof(ts), "%d", tF);
+            tft.fillRect(tftWidth - 126, 7, 40, 18, bruceConfig.bgColor);
             tft.setTextColor(bruceConfig.priColor, bruceConfig.bgColor);
-            tft.drawRightString(ts, tftWidth - 90, 12, 1);
+            int endX = tftWidth - 96;
+            tft.drawRightString(ts, endX, 12, 1);     // number only
+            tft.drawCircle(endX + 4, 13, 2, bruceConfig.priColor);   // degree mark
         }
     }
 #endif
