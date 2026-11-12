@@ -98,6 +98,8 @@ VIN Decoder · Resistor Calc · Lock Calc · Key Copier
 - **WiFi QR ★** — build a `WIFI:` join QR from SSID/security/password
 - **Battery Log ★** — discharge-curve plot + runtime estimate → `/deuce/battlog.csv`
 - **Pocket Bench ★** — voltmeter / logic probe / frequency counter / continuity beeper
+- **UART Console ★** — serial/debug-header tap on GPIO32(RX)/33(TX): auto/manual baud, live ASCII/HEX terminal, send lines (3.3 V only)
+- **Serial Bridge ★** — bridge that UART to a TCP port over WiFi (`nc <deuce-ip> 23`) for remote console access
 - **How To ★** — on-device walkthrough for every Deuce tool
 
 ## ⚙️ Config
