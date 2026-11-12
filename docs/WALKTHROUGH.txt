@@ -303,6 +303,18 @@ OTHERS
 - Battery Log: samples the battery gauge every couple of seconds and plots the
   discharge curve, with a rough "time left" estimate from the slope. SEL starts
   CSV logging to /deuce/battlog.csv; NEXT resets the graph.
+- UART Console: taps a target device's serial/debug header on GPIO32 (RX, wire
+  to the target's TX), GPIO33 (TX, to the target's RX) and a common ground, using
+  the free UART1. On entry it shows a 3.3V warning -- the ESP32 is NOT 5V
+  tolerant, so put a level shifter or divider on 5V+ lines. NEXT cycles the baud
+  (including an auto-detect that samples the line and picks the rate with the
+  most printable text); PREV toggles ASCII/HEX; SEL opens the keyboard to send a
+  line; UP/DOWN scroll back through the log. Ideal for router/IoT consoles and
+  bootloaders.
+- Serial Bridge: same wiring, but instead of a local terminal it joins WiFi and
+  bridges the UART to a TCP port (23). It shows the IP to connect to -- run
+  'nc <deuce-ip> 23' from your laptop and you have the target's serial console
+  over the network. Byte counters show both directions. Pick the baud on entry.
 - Pocket Bench: four small instruments on the free GPIOs. NEXT cycles them:
   Voltmeter (averaged DC volts on the probe pin -- keep inputs at or below
   3.3V), Logic Probe (HIGH / LOW / PULSING with a rough duty %), Frequency

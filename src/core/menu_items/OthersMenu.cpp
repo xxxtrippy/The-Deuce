@@ -39,6 +39,8 @@ void deucePassGen();      // password gen + strength (boards/deuce_v11/deuce_pas
 void deuceWifiQr();       // WiFi-join QR (boards/deuce_v11/deuce_wifiqr.cpp)
 void deuceBattLog();      // battery discharge logger (boards/deuce_v11/deuce_battlog.cpp)
 void deuceBench();        // pocket bench instruments (boards/deuce_v11/deuce_bench.cpp)
+void deuceUartConsole();  // UART console / serial tap (boards/deuce_v11/deuce_uart.cpp)
+void deuceSerialBridge(); // serial<->WiFi bridge (boards/deuce_v11/deuce_uart.cpp)
 #endif
 
 void OthersMenu::optionsMenu() {
@@ -71,6 +73,8 @@ void OthersMenu::optionsMenu() {
         {"WiFi QR",       deuceWifiQr                 },
         {"Battery Log",   deuceBattLog                },
         {"Pocket Bench",  deuceBench                  },
+        {"UART Console",  deuceUartConsole            },
+        {"Serial Bridge", deuceSerialBridge           },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

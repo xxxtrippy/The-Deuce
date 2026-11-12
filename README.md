@@ -200,6 +200,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 - WiFi QR — turn an SSID + password + security type into a `WIFI:` QR that phones scan to join
 - Battery Log — discharge-curve plot off the battery gauge with a runtime estimate and optional CSV logging to /deuce/battlog.csv
 - Pocket Bench — voltmeter (0–3.3 V), logic probe (HIGH/LOW/PULSING + duty), frequency counter, and GND continuity beeper on the free GPIOs; complements Scope/Gen
+- UART Console — serial/debug-header tap on GPIO32(RX)/GPIO33(TX) via UART1: auto or manual baud, live terminal, send typed lines, ASCII/HEX view (3.3 V only — level-shift 5 V lines)
+- Serial Bridge — bridges that UART to a TCP port over WiFi (`nc <deuce-ip> 23`) so you can reach a device's console remotely
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator
