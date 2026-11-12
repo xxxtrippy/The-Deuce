@@ -115,6 +115,8 @@ The WebUI provides a second control surface, without requiring interaction throu
 
 ## `// FE4TURE M4P`
 
+> **Full menu-by-menu inventory of every feature:** see [`docs/FEATURES.md`](docs/FEATURES.md).
+
 ### Radio Frequency `RF`
 - Scan / copy, Record RAW, Custom SubGHz send
 - Spectrum, RSSI Spectrum, SquareWave Spectrum, Spectrogram (waterfall)
