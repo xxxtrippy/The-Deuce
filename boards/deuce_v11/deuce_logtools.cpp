@@ -191,7 +191,7 @@ extern RF24 radio;
 #endif
 
 #define RFM_TRAIL 120
-static float g_tLat[RFM_TRAIL], g_tLng[RFM_TRAIL]; static int g_tRssi[RFM_TRAIL];
+static float *g_tLat = nullptr, *g_tLng = nullptr; static int *g_tRssi = nullptr; // heap while open
 static int g_tn = 0, g_th = 0;
 
 static uint16_t rssiColor(int r) {
@@ -213,6 +213,16 @@ void deuceRFMap() {
         {"915 MHz",    [&]() { ccFreq = 915.00f; }},
     };
     loopOptions(options, MENU_TYPE_SUBMENU, "CC1101 band");
+
+    g_tLat = (float *)malloc(RFM_TRAIL * sizeof(float));
+    g_tLng = (float *)malloc(RFM_TRAIL * sizeof(float));
+    g_tRssi = (int *)malloc(RFM_TRAIL * sizeof(int));
+    if (!g_tLat || !g_tLng || !g_tRssi) {
+        free(g_tLat); free(g_tLng); free(g_tRssi);
+        g_tLat = g_tLng = nullptr; g_tRssi = nullptr;
+        displayError("Out of memory", true); return;
+    }
+    g_tn = 0; g_th = 0;
 
     gpsBegin();
     bool ccOk = (bruceConfigPins.rfModule == CC1101_SPI_MODULE) && initRfModule("rx", ccFreq);
@@ -300,4 +310,6 @@ void deuceRFMap() {
 #endif
     if (ccOk) deinitRfModule();
     gpsEnd();
+    free(g_tLat); free(g_tLng); free(g_tRssi);
+    g_tLat = g_tLng = nullptr; g_tRssi = nullptr;
 }

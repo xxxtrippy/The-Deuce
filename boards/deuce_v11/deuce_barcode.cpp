@@ -298,20 +298,14 @@ static String encodeBarcode(BcType t, const String &data, bool &ok) {
 // deflate blocks. Host-verified bit-exact against PIL before porting. Writes straight
 // to an open SD File, one scanline at a time, so no full-image RAM buffer is needed.
 
-static uint32_t pngCrcTable[256];
-static bool pngCrcReady = false;
-static void pngCrcInit() {
-    for (uint32_t n = 0; n < 256; n++) {
-        uint32_t c = n;
-        for (int k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320u ^ (c >> 1)) : (c >> 1);
-        pngCrcTable[n] = c;
-    }
-    pngCrcReady = true;
-}
+// Tableless CRC-32 (no 1 KB lookup table sitting in RAM at boot; barcode PNGs
+// are tiny so the per-byte bit loop costs nothing noticeable).
 static uint32_t pngCrc(uint32_t crc, const uint8_t *buf, size_t len) {
-    if (!pngCrcReady) pngCrcInit();
     crc ^= 0xffffffffu;
-    for (size_t i = 0; i < len; i++) crc = pngCrcTable[(crc ^ buf[i]) & 0xff] ^ (crc >> 8);
+    for (size_t i = 0; i < len; i++) {
+        crc ^= buf[i];
+        for (int k = 0; k < 8; k++) crc = (crc & 1) ? (0xedb88320u ^ (crc >> 1)) : (crc >> 1);
+    }
     return crc ^ 0xffffffffu;
 }
 static uint32_t pngAdler(uint32_t adler, const uint8_t *buf, size_t len) {

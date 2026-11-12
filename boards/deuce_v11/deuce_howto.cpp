@@ -267,7 +267,7 @@ static const char GUIDE[] PROGMEM =
 // ===========================================================================
 #define HOWTO_MAXLINES 900
 
-static uint16_t g_start[HOWTO_MAXLINES];
+static uint16_t *g_start = nullptr;   // heap-allocated only while the viewer is open
 static int g_nlines = 0;
 
 static inline char gch(int i) { return (char)pgm_read_byte(GUIDE + i); }
@@ -342,6 +342,8 @@ void deuceHowTo() {
     if (maxChars < 10) maxChars = 10;
     int visible = (H - 8) / 11; if (visible < 4) visible = 4;
 
+    g_start = (uint16_t *)malloc(HOWTO_MAXLINES * sizeof(uint16_t));
+    if (!g_start) { displayError("Out of memory", true); return; }
     howtoWrap(maxChars);
 
     int top = 0;
@@ -374,4 +376,6 @@ void deuceHowTo() {
         if (redraw) howtoDraw(top, visible, maxChars);
         vTaskDelay(20 / portTICK_PERIOD_MS);
     }
+    free(g_start);
+    g_start = nullptr;
 }

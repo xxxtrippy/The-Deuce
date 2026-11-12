@@ -54,12 +54,14 @@ static void title(const char *t) {
 
 // ── Weather Log ───────────────────────────────────────────────────────────────
 #define WX_HIST 160
-static float g_wx[WX_HIST]; static int g_wn = 0, g_wh = 0;
+static float *g_wx = nullptr; static int g_wn = 0, g_wh = 0;  // g_wx heap-allocated while open
 
 void deuceWeatherLog() {
     int W = tft.width(), H = tft.height();
     uint16_t bg = bruceConfig.bgColor, pri = bruceConfig.priColor, sec = bruceConfig.secColor;
     if (!sht41Present() && !sht41Begin()) { displayError("No SHT41 found", true); return; }
+    g_wx = (float *)malloc(WX_HIST * sizeof(float));
+    if (!g_wx) { displayError("Out of memory", true); return; }
     const char *PATH = "/deuce/weather.csv";
     const String HDR = "time,tempF,rh,dewF";
     g_wn = 0; g_wh = 0;
@@ -122,6 +124,8 @@ void deuceWeatherLog() {
         tft.drawString("[SEL]log now [NEXT]auto [ESC]", 4, H - 11);
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+    free(g_wx);
+    g_wx = nullptr;
 }
 
 // ── Security Tripwire ─────────────────────────────────────────────────────────

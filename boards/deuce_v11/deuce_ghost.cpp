@@ -21,7 +21,7 @@
 // --- sweep set --------------------------------------------------------------
 #define GHOST_TWO_PI 6.28318530718f
 #define GHOST_MAXF 64
-static float g_freqs[GHOST_MAXF];
+static float *g_freqs = nullptr;   // all ghost buffers are heap-allocated only while the tool runs
 static int g_nf = 0;
 
 static void ghostBuildFreqs() {
@@ -37,8 +37,8 @@ static void ghostBuildFreqs() {
 // OWN emissions -- display/SPI switching noise on the RF side, and the static PCB
 // magnetic field on the mag side -- are measured first and subtracted, rather
 // than being shown as phantom activity.
-static float g_floor[GHOST_MAXF];   // per-freq self/ambient RSSI baseline (dBm)
-static float g_rfNoise[GHOST_MAXF]; // per-freq self-noise envelope (dB) -> min spike threshold
+static float *g_floor = nullptr;    // per-freq self/ambient RSSI baseline (dBm)
+static float *g_rfNoise = nullptr;  // per-freq self-noise envelope (dB) -> min spike threshold
 static int g_sensIdx = 1;                      // sensitivity preset index
 static const float GHOST_SENS[3] = {4, 7, 11}; // spike threshold (dB over floor)
 static const char *GHOST_SENS_NAME[3] = {"HIGH", "MED", "LOW"};
@@ -52,9 +52,28 @@ struct GhostBlip {
     int rad;     // pixels from center
     uint32_t born;
 };
-static GhostBlip g_blips[GHOST_BLIPS];
+static GhostBlip *g_blips = nullptr;
 static int g_blipHead = 0;
 #define GHOST_BLIP_MS 2600
+
+// calibration accumulators (heap, only while the tool runs)
+static float *g_gsum = nullptr, *g_gsumsq = nullptr;
+
+static void ghostFreeBufs() {
+    free(g_freqs); free(g_floor); free(g_rfNoise); free(g_blips); free(g_gsum); free(g_gsumsq);
+    g_freqs = g_floor = g_rfNoise = g_gsum = g_gsumsq = nullptr;
+    g_blips = nullptr;
+}
+static bool ghostAllocBufs() {
+    g_freqs = (float *)malloc(GHOST_MAXF * sizeof(float));
+    g_floor = (float *)malloc(GHOST_MAXF * sizeof(float));
+    g_rfNoise = (float *)malloc(GHOST_MAXF * sizeof(float));
+    g_gsum = (float *)malloc(GHOST_MAXF * sizeof(float));
+    g_gsumsq = (float *)malloc(GHOST_MAXF * sizeof(float));
+    g_blips = (GhostBlip *)malloc(GHOST_BLIPS * sizeof(GhostBlip));
+    if (!g_freqs || !g_floor || !g_rfNoise || !g_gsum || !g_gsumsq || !g_blips) { ghostFreeBufs(); return false; }
+    return true;
+}
 
 // --- geometry ---------------------------------------------------------------
 #define GHOST_HDR 24
@@ -241,8 +260,8 @@ static void ghostCalibrate() {
     tft.drawRect(bx, by, bw, bh, sec);
 
     const int PASSES = 8;
-    // RF accumulators
-    static float sum[GHOST_MAXF], sumsq[GHOST_MAXF];
+    // RF accumulators (heap buffers allocated for the duration of the tool)
+    float *sum = g_gsum, *sumsq = g_gsumsq;
     for (int i = 0; i < g_nf; i++) { sum[i] = 0; sumsq[i] = 0; }
     // mag accumulators
     double msx = 0, msy = 0, msz = 0, msm = 0, msm2 = 0;
@@ -310,9 +329,10 @@ void deuceGhostRadar() {
         displayError("Ghost Radar needs a CC1101", true);
         return;
     }
+    if (!ghostAllocBufs()) { displayError("Out of memory", true); return; }
 
     ghostBuildFreqs();
-    for (auto &b : g_blips) b.used = false;
+    for (int i = 0; i < GHOST_BLIPS; i++) g_blips[i].used = false;
     g_blipHead = 0;
     g_level = 0;
     g_peakAct = 0;
@@ -327,6 +347,7 @@ void deuceGhostRadar() {
     if (!initRfModule("rx", g_freqs[0])) {
         bruceConfigPins.rfFreq = savedFreq;
         deinitRfModule();
+        ghostFreeBufs();
         displayError("RF init failed", true);
         return;
     }
@@ -463,4 +484,5 @@ void deuceGhostRadar() {
 
     bruceConfigPins.rfFreq = savedFreq;
     deinitRfModule();
+    ghostFreeBufs();
 }

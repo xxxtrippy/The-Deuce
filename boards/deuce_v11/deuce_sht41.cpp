@@ -114,7 +114,7 @@ static const char *comfortLabel(float t, float rh) {
 
 // ── history ───────────────────────────────────────────────────────────────────
 #define SHT_HIST 160
-static float g_tHist[SHT_HIST], g_hHist[SHT_HIST];
+static float *g_tHist = nullptr, *g_hHist = nullptr;  // heap-allocated only while dashboard open
 static int g_n = 0, g_head = 0;
 static float g_tMin, g_tMax, g_hMin, g_hMax;
 
@@ -215,6 +215,10 @@ void deuceSht41() {
         displayError("No SHT41 found", true);
         return;
     }
+    g_tHist = (float *)malloc(SHT_HIST * sizeof(float));
+    g_hHist = (float *)malloc(SHT_HIST * sizeof(float));
+    if (!g_tHist || !g_hHist) { free(g_tHist); free(g_hHist); g_tHist = g_hHist = nullptr; displayError("Out of memory", true); return; }
+
     int W = tft.width(), H = tft.height();
     uint16_t bg = bruceConfig.bgColor, pri = bruceConfig.priColor, sec = bruceConfig.secColor;
     const uint16_t TCOL = TFT_ORANGE, HCOL = TFT_CYAN;
@@ -307,4 +311,6 @@ void deuceSht41() {
 
         vTaskDelay(60 / portTICK_PERIOD_MS);
     }
+    free(g_tHist); free(g_hHist);
+    g_tHist = g_hHist = nullptr;
 }

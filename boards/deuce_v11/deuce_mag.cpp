@@ -84,7 +84,7 @@ static void calibrate() {
 
 // ── scrolling graph ───────────────────────────────────────────────────────────
 #define MAG_HIST 160
-static float g_hist[MAG_HIST];
+static float *g_hist = nullptr;   // heap-allocated only while the tool is open
 static int g_n = 0, g_head = 0;
 static void histPush(float v) { g_hist[g_head] = v; g_head = (g_head + 1) % MAG_HIST; if (g_n < MAG_HIST) g_n++; }
 static float histGet(int i) { int s = (g_head - g_n + MAG_HIST) % MAG_HIST; return g_hist[(s + i) % MAG_HIST]; }
@@ -195,6 +195,9 @@ void deuceMagnetometer() {
     int W = tft.width(), H = tft.height();
     uint16_t bg = bruceConfig.bgColor, pri = bruceConfig.priColor, sec = bruceConfig.secColor;
 
+    g_hist = (float *)malloc(MAG_HIST * sizeof(float));
+    if (!g_hist) { displayError("Out of memory", true); return; }
+
     int view = MV_COMPASS;
     float vmin = 1e9, vmax = -1e9, base = 50.0f;
     bool baseSet = false;
@@ -242,4 +245,6 @@ void deuceMagnetometer() {
         }
         vTaskDelay(70 / portTICK_PERIOD_MS);
     }
+    free(g_hist);
+    g_hist = nullptr;
 }
