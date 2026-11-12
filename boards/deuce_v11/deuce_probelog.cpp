@@ -17,11 +17,11 @@
 struct ProbeRaw { uint8_t mac[6]; char ssid[33]; int8_t rssi; uint8_t ch; };
 #define RING 48
 static volatile uint32_t pbHead = 0;
-static ProbeRaw pbRing[RING];
+static ProbeRaw *pbRing = nullptr;   // heap-allocated only while the tool runs
 static volatile uint8_t pbChannel = 1;
 
 static void IRAM_ATTR probe_cb(void *buf, wifi_promiscuous_pkt_type_t type) {
-    if (type != WIFI_PKT_MGMT) return;
+    if (type != WIFI_PKT_MGMT || !pbRing) return;
     const wifi_promiscuous_pkt_t *pkt = (const wifi_promiscuous_pkt_t *)buf;
     if (!pkt) return;
     const uint8_t *p = pkt->payload;
@@ -85,6 +85,10 @@ void deuceProbeLog() {
     int chIdx = 0;
     uint32_t lastHop = 0, lastDraw = 0;
     File logf;
+
+    pbHead = 0;
+    pbRing = (ProbeRaw *)malloc(sizeof(ProbeRaw) * RING);
+    if (!pbRing) { displayError("Out of memory", true); return; }
 
     wifiStart();
     pbChannel = CHANS[0];
@@ -168,4 +172,6 @@ void deuceProbeLog() {
     }
     if (logf) logf.close();
     wifiStop();
+    free(pbRing);     // callback is deregistered in wifiStop() before this
+    pbRing = nullptr;
 }

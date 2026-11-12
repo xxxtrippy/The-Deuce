@@ -50,12 +50,13 @@ static void cc1101AsyncFsk() {
 #define MAXBITS    TARGET_BITS
 
 // Returns number of bits recovered into `bits` (0/1 per byte).
-static int sampleWindow(int gdo, uint32_t baud, uint8_t *bits, int maxBits) {
+// `raw` is a caller-owned scratch buffer of `maxSamples` bytes (heap-allocated
+// only while the tool runs, so it costs nothing at boot).
+static int sampleWindow(int gdo, uint32_t baud, uint8_t *bits, int maxBits, uint8_t *raw,
+                        int maxSamples) {
     uint32_t spb = baud * OVERSAMPLE;                 // samples/sec
     uint32_t stepUs = 1000000UL / spb;
     if (stepUs == 0) stepUs = 1;
-    static uint8_t raw[TARGET_BITS * OVERSAMPLE];
-    int maxSamples = (int)sizeof(raw);
 
     uint32_t t = micros();
     for (int i = 0; i < maxSamples; i++) {
@@ -177,7 +178,12 @@ void deucePocsag() {
     if (gdo <= 0) { deinitRfModule(); displayError("No GDO0 pin set", true); return; }
     pinMode(gdo, INPUT);
 
-    static uint8_t bits[MAXBITS];
+    // scratch buffers on the heap -- only alive while this tool runs, so they
+    // cost nothing at boot (static RAM is at a premium on this build)
+    const int RAW_SZ = TARGET_BITS * OVERSAMPLE;
+    uint8_t *bits = (uint8_t *)malloc(MAXBITS);
+    uint8_t *raw = (uint8_t *)malloc(RAW_SZ);
+    if (!bits || !raw) { free(bits); free(raw); deinitRfModule(); displayError("Out of memory", true); return; }
     int caught = 0;
     String lastRic = "--", lastMsg = "(none yet)"; int lastFunc = 0;
     bool redraw = true;
@@ -188,7 +194,7 @@ void deucePocsag() {
         if (check(NextPress)) { baudIdx = (baudIdx + 1) % 3; redraw = true; }
 
         // one capture + decode pass
-        int nb = sampleWindow(gdo, BAUDS[baudIdx], bits, MAXBITS);
+        int nb = sampleWindow(gdo, BAUDS[baudIdx], bits, MAXBITS, raw, RAW_SZ);
         Pocsag p;
         if (nb > 600 && decodePocsag(bits, nb, p)) {
             caught++;
@@ -231,6 +237,8 @@ void deucePocsag() {
         }
         vTaskDelay(10 / portTICK_PERIOD_MS); // feed watchdog between captures
     }
+    free(bits);
+    free(raw);
     ELECHOUSE_cc1101.SpiStrobe(STR_SIDLE);
     deinitRfModule();
 }

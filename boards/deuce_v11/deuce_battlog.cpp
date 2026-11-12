@@ -17,7 +17,8 @@ void deuceBattLog() {
     uint16_t bg = bruceConfig.bgColor, pri = bruceConfig.priColor, sec = bruceConfig.secColor;
 
     const int N = 240;
-    static int8_t hist[240];
+    int8_t *hist = (int8_t *)malloc(N);          // heap, not boot RAM
+    if (!hist) { displayError("Out of memory", true); return; }
     int count = 0, head = 0;
     uint32_t startMs = millis();
     int startPct = getBattery();
@@ -101,4 +102,5 @@ void deuceBattLog() {
         }
         vTaskDelay(60 / portTICK_PERIOD_MS);
     }
+    free(hist);
 }

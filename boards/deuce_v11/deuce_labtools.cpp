@@ -18,7 +18,8 @@ void deuceScope() {
     int scopePin = 39;            // ADC (battery) by default
     int tbIdx = 1; const int TB[4] = { 50, 150, 500, 1500 }; // us/sample
     int genPin = 32, genFreq = 1000; bool genOn = false;
-    static uint16_t buf[320];
+    uint16_t *buf = (uint16_t *)malloc(320 * sizeof(uint16_t)); // heap, not boot RAM
+    if (!buf) { displayError("Out of memory", true); return; }
     tft.fillScreen(bg);
     bool redrawHdr = true;
 
@@ -73,6 +74,7 @@ void deuceScope() {
         vTaskDelay(40 / portTICK_PERIOD_MS);
     }
     if (genOn) noTone(genPin);
+    free(buf);
 }
 
 // ── Morse Trainer ─────────────────────────────────────────────────────────────
