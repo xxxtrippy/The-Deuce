@@ -4,6 +4,10 @@
 #include "core/bus_HAL.h"
 #include "core/powerSave.h"
 #include "core/ram_profile.h"
+
+#if __has_include("deuce_blehid.h")
+#include "deuce_blehid.h" // THE DEUCE v1.1: BLE keyboard/controller host
+#endif
 #include "core/serial_commands/cli.h"
 #include "core/utils.h"
 #include "current_year.h"
@@ -586,6 +590,11 @@ void setup() {
         bruceConfig.setStartupApp("");
     }
 
+#if __has_include("deuce_blehid.h")
+    // THE DEUCE v1.1: reconnect a previously-paired BLE keyboard/controller.
+    if (bleHidBonded()) bleHidStart();
+#endif
+
     RAM_LOG("setup-end");
 }
 
@@ -620,7 +629,19 @@ void loop() {
     }
 #endif
 
+#if __has_include("deuce_blehid.h")
+    // THE DEUCE v1.1: a BLE controller Guide/shortcut button sets g_ctrlJump and
+    // unwinds to here -- open that tab instead of the normal main menu.
+    if (g_ctrlJump >= 0) {
+        int j = g_ctrlJump;
+        g_ctrlJump = -1;
+        deuceHandleCtrlJump(j);
+    } else {
+        mainMenu.begin();
+    }
+#else
     mainMenu.begin();
+#endif
     delay(1);
 }
 #else

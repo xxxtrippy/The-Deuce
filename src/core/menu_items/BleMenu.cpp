@@ -16,6 +16,10 @@
 #include "deuce_bletools.h"
 #define HAVE_DEUCE_BLE 1
 #endif
+#if __has_include("deuce_blehid.h")
+#include "deuce_blehid.h"
+#define HAVE_DEUCE_BLEHID 1
+#endif
 
 void BleMenu::optionsMenu() {
     options.clear();
@@ -42,6 +46,9 @@ void BleMenu::optionsMenu() {
 #ifdef HAVE_DEUCE_BLE
     options.push_back({"Tracker Scan", [=]() { deuceBleTracker(); }});
     options.push_back({"GATT Explorer", [=]() { deuceBleGatt(); }});
+#endif
+#ifdef HAVE_DEUCE_BLEHID
+    options.push_back({"BLE Input", [=]() { deuceBleInputPair(); }});
 #endif
 
 #if !defined(LITE_VERSION)
