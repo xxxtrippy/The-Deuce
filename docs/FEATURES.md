@@ -30,6 +30,7 @@ Presenter Mode · iBeacon · BLE Suite · Ninebot
 
 - **Tracker Scan ★** — detect AirTag/FindMy, Tile, Samsung SmartTag; flags tags that persist across scans (anti-stalk)
 - **GATT Explorer ★** — connect to a BLE device and walk its services / characteristics / properties / values
+- **BLE Input ★** — host a BLE keyboard and/or Xbox Series/One S (BLE) controller as device input (D-pad nav, A=select, B=back, keyboard text, Guide→Settings); auto-reconnects at boot
 
 ## 📻 RF / Sub-GHz (CC1101)
 Scan/Copy · Record RAW · Custom SubGhz · Spectrum · RSSI Spectrum ·
@@ -100,6 +101,7 @@ VIN Decoder · Resistor Calc · Lock Calc · Key Copier
 - **Pocket Bench ★** — voltmeter / logic probe / frequency counter / continuity beeper
 - **UART Console ★** — serial/debug-header tap on GPIO32(RX)/33(TX): auto/manual baud, live ASCII/HEX terminal, send lines (3.3 V only)
 - **Serial Bridge ★** — bridge that UART to a TCP port over WiFi (`nc <deuce-ip> 23`) for remote console access
+- **Controller ★** — remap BLE controller buttons (X/Y/LB/RB/View/Menu) to jump to menu tabs (A/B = Select/Back, Guide = Settings)
 - **How To ★** — on-device walkthrough for every Deuce tool
 
 ## ⚙️ Config

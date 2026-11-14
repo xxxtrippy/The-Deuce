@@ -15,6 +15,7 @@
 #include "core/display.h"
 #include "core/main_menu.h"
 #include "core/mykeyboard.h"
+#include "deuce_ctrlmap.h"
 
 volatile int g_ctrlJump = -1;
 
@@ -186,10 +187,16 @@ static void injectReport(uint8_t reportId, const uint8_t *data, size_t len) {
     }
 
     // controller
+    static bool prevGuide = false;
+    static uint8_t prevBtn = 0;
+
     if (L->guide && L->btnBit >= 0) {
-        if (bit_at(data, len, L->btnBit, 1)) { g_ctrlJump = 0; returnToMenu = true; } // 0 = Settings
+        bool g = bit_at(data, len, L->btnBit, 1);
+        if (g && !prevGuide) { g_ctrlJump = 0; returnToMenu = true; } // rising edge -> Settings
+        prevGuide = g;
     }
     if (L->hatBit >= 0) {
+        // D-pad repeats while held (natural for scrolling)
         uint8_t hat = bit_at(data, len, L->hatBit, L->hatSize ? L->hatSize : 4);
         // hat: 1=N,2=NE,3=E,4=SE,5=S,6=SW,7=W,8=NW, 0/15=neutral
         if (hat == 8 || hat == 1 || hat == 2) { UpPress = true; PrevPress = true; AnyKeyPress = true; }
@@ -198,11 +205,19 @@ static void injectReport(uint8_t reportId, const uint8_t *data, size_t len) {
         if (hat == 6 || hat == 7 || hat == 8) { PrevPress = true; AnyKeyPress = true; } // left
     }
     if (L->btnBit >= 0 && !L->guide) {
-        // Xbox BLE button order (page 0x09): 1=A,2=B,3=X,4=Y,5=LB,6=RB,7=View,8=Menu
-        bool A = bit_at(data, len, L->btnBit + 0, 1);
-        bool B = bit_at(data, len, L->btnBit + 1, 1);
-        if (A) { SelPress = true; AnyKeyPress = true; }
-        if (B) { EscPress = true; AnyKeyPress = true; }
+        // Xbox BLE button order (page 0x09): bit0=A,1=B,2=X,3=Y,4=LB,5=RB,6=View,7=Menu
+        uint8_t cur = 0;
+        for (int i = 0; i < 8; i++) if (bit_at(data, len, L->btnBit + i, 1)) cur |= (1 << i);
+        uint8_t rising = cur & ~prevBtn;   // fire buttons on press edge only
+        prevBtn = cur;
+        if (rising & (1 << 0)) { SelPress = true; AnyKeyPress = true; }   // A -> Select
+        if (rising & (1 << 1)) { EscPress = true; AnyKeyPress = true; }   // B -> Back
+        for (int b = 2; b < 8; b++) {                                     // X/Y/LB/RB/View/Menu
+            if (rising & (1 << b)) {
+                int t = ctrlShortcutFor(b);
+                if (t >= 0) { g_ctrlJump = t; returnToMenu = true; }
+            }
+        }
     }
 }
 

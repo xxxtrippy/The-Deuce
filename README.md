@@ -151,6 +151,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - BLE Keyboard, Media Cmds, Presenter mode, iBeacon, Ninebot
 - Tracker Scan — detect AirTag/FindMy, Tile and Samsung SmartTag item trackers nearby; flags any that persist across scans (possible stalking)
 - GATT Explorer — connect to a BLE device and enumerate its services, characteristics, properties (R/W/N) and readable values
+- BLE Input — host a BLE keyboard and/or Xbox Series/One S (BLE) controller as input: D-pad navigates, A = select, B = back, keyboard types everywhere, Guide → Settings; auto-reconnects at boot (3.3V note n/a — radio only; Classic-BT pads unsupported)
 
 ### 2.4 GHz `NRF24`
 - Information, Spectrum, NRF Jammer, MouseJack
@@ -202,6 +203,7 @@ The WebUI provides a second control surface, without requiring interaction throu
 - Pocket Bench — voltmeter (0–3.3 V), logic probe (HIGH/LOW/PULSING + duty), frequency counter, and GND continuity beeper on the free GPIOs; complements Scope/Gen
 - UART Console — serial/debug-header tap on GPIO32(RX)/GPIO33(TX) via UART1: auto or manual baud, live terminal, send typed lines, ASCII/HEX view (3.3 V only — level-shift 5 V lines)
 - Serial Bridge — bridges that UART to a TCP port over WiFi (`nc <deuce-ip> 23`) so you can reach a device's console remotely
+- Controller — remap controller buttons (X/Y/LB/RB/View/Menu) to jump straight to any menu tab; A/B stay Select/Back, Guide stays Settings
 - Resistor Calc — 4 / 5 / 6 band with reversed-entry detection
 - Key Copier — mechanical key bitting visualizer
 - Lock Calc — lock combination calculator

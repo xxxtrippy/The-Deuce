@@ -42,6 +42,10 @@ void deuceBench();        // pocket bench instruments (boards/deuce_v11/deuce_be
 void deuceUartConsole();  // UART console / serial tap (boards/deuce_v11/deuce_uart.cpp)
 void deuceSerialBridge(); // serial<->WiFi bridge (boards/deuce_v11/deuce_uart.cpp)
 #endif
+#if __has_include("deuce_ctrlmap.h")
+#include "deuce_ctrlmap.h"
+#define HAVE_DEUCE_CTRLMAP 1
+#endif
 
 void OthersMenu::optionsMenu() {
     options = {
@@ -75,6 +79,9 @@ void OthersMenu::optionsMenu() {
         {"Pocket Bench",  deuceBench                  },
         {"UART Console",  deuceUartConsole            },
         {"Serial Bridge", deuceSerialBridge           },
+#endif
+#ifdef HAVE_DEUCE_CTRLMAP
+        {"Controller",    deuceControllerMenu         },
 #endif
 
 #if defined(MIC_SPM1423) || defined(MIC_INMP441)

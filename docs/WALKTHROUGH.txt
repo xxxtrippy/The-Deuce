@@ -97,6 +97,15 @@ BLUETOOTH (BLE)
   its GATT table -- every service, its characteristics, their properties (R/W/N)
   and, where readable, the current value (text or hex). UP/DOWN scrolls. A quick
   way to poke at what a BLE gadget exposes.
+- BLE Input: pair a BLE keyboard and/or an Xbox Series/One S (BLE) controller to
+  drive the Deuce. Put the device in pairing mode, open BLE Input, pick it from
+  the list and it bonds -- after that it reconnects automatically at boot. Once
+  connected: the D-pad navigates menus (the hovered item highlights as usual), A
+  selects, B goes back, a keyboard types into any text field, and the Xbox Guide
+  button jumps to Settings. The joystick keeps working alongside it. Note: this
+  is BLE only -- PS4/PS5/Switch Pro and old Classic-Bluetooth devices won't pair.
+  Controller button layouts vary a little by model, so if a button is off, the
+  Controller screen (Others) lets you see/remap the shortcuts.
 
 
 --------------------------------------------------------------------------------
@@ -315,6 +324,11 @@ OTHERS
   bridges the UART to a TCP port (23). It shows the IP to connect to -- run
   'nc <deuce-ip> 23' from your laptop and you have the target's serial console
   over the network. Byte counters show both directions. Pick the baud on entry.
+- Controller: set up what your BLE controller's buttons do. A stays Select and B
+  stays Back, and the Xbox Guide button always jumps to Settings; here you assign
+  X, Y, LB, RB, View and Menu to jump straight to any top-level menu (WiFi, RF,
+  GPS, Others, etc.). Pick a button, pick its destination; it's saved and takes
+  effect immediately. Handy for one-press access to the tabs you use most.
 - Pocket Bench: four small instruments on the free GPIOs. NEXT cycles them:
   Voltmeter (averaged DC volts on the probe pin -- keep inputs at or below
   3.3V), Logic Probe (HIGH / LOW / PULSING with a rough duty %), Frequency
