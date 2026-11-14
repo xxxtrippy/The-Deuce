@@ -285,7 +285,7 @@ A shared SPI architecture keeps the radio and storage peripherals on a tightly p
 | LittleFS | 256 KB |
 | Total flash | 4 MB |
 
-Partition configuration: `custom_4Mb_deuce.csv`
+Partition configuration: `partitions/custom_4Mb_deuce.csv`
 
 ---
 
