@@ -65,7 +65,8 @@ void deuceControllerMenu() {
         // choose a target for the selected button
         std::vector<Option> t;
         for (int i = 0; i < NTGT; i++) t.push_back({TGTS[i].name, []() {}});
-        int ts = loopOptions(t, MENU_TYPE_SUBMENU, String(BTNS[sel].name) + " jumps to");
+        String ttl = String(BTNS[sel].name) + " jumps to";
+        int ts = loopOptions(t, MENU_TYPE_SUBMENU, ttl.c_str());
         if (ts < 0 || ts >= NTGT) continue;
 
         g_short[BTNS[sel].idx] = TGTS[ts].jump;
